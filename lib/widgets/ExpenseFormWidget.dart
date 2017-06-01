@@ -28,6 +28,9 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
   String _categories;
 
   String _validateValue(String pValue){
+    pValue = pValue.trim();
+    if(pValue.length == 0)
+      return "Veuillez saisir le montant de la dépense";
     _value = double.parse(pValue);
     return null;
   }
@@ -51,14 +54,25 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
 
       var b = JSON.decode(response.body);
 
+      var icon;
       var message;
       if(b.containsKey("response")){
+        icon = Icons.mood;
         message = "Dépense enregistrée";
       }
       else{
+        icon = Icons.sentiment_neutral;
         message = "Une erreur est apparue lors de l'enregistrement.";
       }
-      _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(message), backgroundColor: Colors.green));
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: new Row(
+            children: <Widget>[
+              new Icon(icon),
+              new Text(message)
+            ]
+          ),
+          backgroundColor: Colors.green
+      ));
     }
     else{
 
