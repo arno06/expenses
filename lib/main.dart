@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:expenses/widgets/ExpenseFormWidget.dart';
+//import 'package:expenses/widgets/ExpenseFormWidget.dart';
+import 'package:expenses/widgets/HomeWidget.dart';
 
 void main() {
   runApp(new MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new ExpenseFormWidget(),
+      home: new HomeWidget(),
     );
   }
 }
