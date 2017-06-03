@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:expenses/utils/geom.dart';
+import 'dart:ui' show lerpDouble;
 
 class HomeWidget extends StatefulWidget{
   const HomeWidget({Key key}):super(key:key);
@@ -10,26 +11,87 @@ class HomeWidget extends StatefulWidget{
   HomeState createState() => new HomeState();
 }
 
-class HomeState extends State<HomeWidget>{
+class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
+
+  int expenses = 0;
+  int days = 0;
+  int salary = 0;
+
+  double value = 0.0;
+  AnimationController animation;
+
+  @override
+  void initState(){
+    super.initState();
+    animation = new AnimationController(vsync: this, duration:const Duration(milliseconds:5000));
+    animation.addListener((){
+      setState((){
+        this.value = lerpDouble(this.value, 75.0, animation.value);
+        this.expenses = lerpDouble(this.expenses.toDouble(), 200, animation.value).round();
+        this.days = lerpDouble(this.days.toDouble(), 19, animation.value).round();
+        this.salary = lerpDouble(this.salary.toDouble(), 2897, animation.value).round();
+      });
+    });
+    animation.forward();
+  }
+
+  @override
+  void dispose(){
+    animation.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext pContext){
     return new Scaffold(
+      backgroundColor: const Color(0xFFeaeaea),
       body: new Column(
         children: <Widget>[
           new Container(
-            decoration: new BoxDecoration(color: Colors.deepPurpleAccent),
-            child:new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                new Text("0%"),
-                new PieChart(value:75.0),
-                new Text("100%")
+            padding:const EdgeInsets.only(top:60.0),
+            decoration: new BoxDecoration(color: const Color(0xFF006978)),
+            child:new Center(
+              child: new PieChart(value:this.value)
+            )
+          ),
+          new Container(
+            padding:const EdgeInsets.only(top:50.0, bottom:50.0),
+            child:
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new IndicatorWidget(count:this.expenses, label:"Dépenses enregistrées"),
+                  new IndicatorWidget(count:this.days, label:"Jours restants"),
+                  new IndicatorWidget(count:this.salary, label:"€ de salaire")
               ]
             )
           )
         ]
-      )
+      ),
+      floatingActionButton: new FloatingActionButton(child: const Icon(Icons.add), onPressed: (){
+        Navigator.pushNamed(context, '/add');
+      })
+    );
+  }
+
+  void _displayAddForm(){
+    print("bouboup");
+  }
+}
+
+class IndicatorWidget extends StatelessWidget{
+  const IndicatorWidget({Key key, this.count, this.label}):super(key:key);
+
+  final int count;
+  final String label;
+
+  @override
+  Widget build(BuildContext pContext){
+    return new Column(
+        children: <Widget>[
+          new Text(this.count.toString(), style:new TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color:const Color(0xFF444444))),
+          new Text(this.label, style:new TextStyle(fontSize: 10.0, color: Colors.grey))
+        ]
     );
   }
 }
@@ -37,7 +99,7 @@ class HomeState extends State<HomeWidget>{
 class PieChart extends StatelessWidget{
   PieChart({Key key, this.value}):super(key:key);
 
-  double value;
+  final double value;
 
   @override
   Widget build(BuildContext pContext){
@@ -58,17 +120,17 @@ class PiePainter extends CustomPainter{
 
   @override
   void paint(Canvas pCanvas, Size pSize){
-    print(value.toString());
-    print(pSize.toString());
 
     final double radius = pSize.shortestSide/2.0;
 
-
-    final double diff = 360.0 - 270.0;
+    final double maxAngle = 270.0;
+    final double diff = 360.0 - maxAngle;
     final double s = 90.0 + (diff / 2.0);
 
-    this._drawArc(pCanvas, s, 270.0, Colors.white, radius);
-    this._drawArc(pCanvas, s, 180.0, Colors.blue, radius);
+    final double valueAngle = maxAngle * (this.value / 100.0);
+
+    this._drawArc(pCanvas, s, maxAngle, Colors.white, radius);
+    this._drawArc(pCanvas, s, valueAngle, const Color(0xff56c8d8), radius);
 
   }
 
@@ -97,12 +159,10 @@ class PiePainter extends CustomPainter{
     path.close();
 
     pCanvas.drawPath(path, p);
-
-
   }
 
   @override
   bool shouldRepaint(PiePainter pOldPainter){
-    return false;
+    return this.value  != pOldPainter.value;
   }
 }

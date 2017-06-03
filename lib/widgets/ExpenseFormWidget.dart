@@ -57,27 +57,24 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
       var icon;
       var message;
       if(b.containsKey("response")){
-        icon = Icons.mood;
-        message = "Dépense enregistrée";
+        Navigator.pop(this.context);
       }
       else{
         icon = Icons.sentiment_neutral;
         message = "Une erreur est apparue lors de l'enregistrement.";
+
+        _scaffoldKey.currentState.showSnackBar(new SnackBar(
+            content: new Row(
+                children: <Widget>[
+                  new Icon(icon),
+                  new Text(message)
+                ]
+            ),
+            backgroundColor: Colors.red
+        ));
       }
-      _scaffoldKey.currentState.showSnackBar(new SnackBar(
-          content: new Row(
-            children: <Widget>[
-              new Icon(icon),
-              new Text(message)
-            ]
-          ),
-          backgroundColor: Colors.green
-      ));
-    }
-    else{
 
     }
-
   }
 
   @override

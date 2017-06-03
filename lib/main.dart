@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-//import 'package:expenses/widgets/ExpenseFormWidget.dart';
+import 'package:expenses/widgets/ExpenseFormWidget.dart';
 import 'package:expenses/widgets/HomeWidget.dart';
 
 void main() {
@@ -13,11 +13,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Expenses',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new HomeWidget(),
+      routes: <String, WidgetBuilder>{
+        '/':  (BuildContext context) => new HomeWidget(),
+        '/add':  (BuildContext context) => new ExpenseFormWidget(),
+      }
     );
   }
 }
