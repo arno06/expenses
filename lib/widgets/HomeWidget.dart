@@ -1,21 +1,34 @@
 import 'dart:math';
 
+import 'package:observable/observable.dart';
 import 'package:flutter/material.dart';
 import 'package:expenses/utils/geom.dart';
 import 'dart:ui' show lerpDouble;
 
+import 'package:expenses/data/settings.dart';
+import 'package:expenses/data/expense.dart';
+
 class HomeWidget extends StatefulWidget{
-  const HomeWidget({Key key}):super(key:key);
+  const HomeWidget({Key key, this.settings}):super(key:key);
+
+  final Settings settings;
 
   @override
-  HomeState createState() => new HomeState();
+  HomeState createState() => new HomeState(this.settings);
 }
 
 class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
+  HomeState(this.settings){
+    this.settings.changes.listen((List<ChangeRecord> pChanges){
+      refreshValues();
+    });
+  }
 
-  int expenses = 0;
-  int days = 0;
-  int salary = 0;
+  final Settings settings;
+  
+  int expensesCount = 0;
+  int daysLeft = 0;
+  int displaySalary = 0;
 
   double value = 0.0;
   AnimationController animation;
@@ -23,13 +36,21 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
   @override
   void initState(){
     super.initState();
+    this.refreshValues();
+  }
+
+  void refreshValues(){
+    DateTime today = new DateTime.now();
+    int daysLeft = settings.endDate.difference(today).inDays;
     animation = new AnimationController(vsync: this, duration:const Duration(milliseconds:5000));
+    double total = settings.expenses.fold(0.0, (double value, Expense element)=>value+element.value);
+    int currentPercentage = ((total / settings.salary) * 100).round();
     animation.addListener((){
       setState((){
-        this.value = lerpDouble(this.value, 75.0, animation.value);
-        this.expenses = lerpDouble(this.expenses.toDouble(), 200, animation.value).round();
-        this.days = lerpDouble(this.days.toDouble(), 19, animation.value).round();
-        this.salary = lerpDouble(this.salary.toDouble(), 2897, animation.value).round();
+        this.value = lerpDouble(this.value, currentPercentage, animation.value);
+        this.expensesCount = lerpDouble(this.expensesCount.toDouble(), settings.expenses.length, animation.value).round();
+        this.daysLeft = lerpDouble(this.daysLeft.toDouble(), daysLeft, animation.value).round();
+        this.displaySalary = lerpDouble(this.displaySalary.toDouble(), settings.salary, animation.value).round();
       });
     });
     animation.forward();
@@ -50,8 +71,26 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
           new Container(
             padding:const EdgeInsets.only(top:60.0),
             decoration: new BoxDecoration(color: const Color(0xFF006978)),
-            child:new Center(
-              child: new PieChart(value:this.value)
+            child:new Stack(
+              children: <Widget>[
+                new Container(
+                  child:new Center(
+                    child: new PieChart(value:this.value)
+                  )
+                ),
+                new Container(
+                  padding: const EdgeInsets.only(top:70.0),
+                  child: new Center(
+                    child: new Text(this.value.round().toString()+"%",
+                        style: new TextStyle(
+                            fontSize: 45.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                        )
+                    )
+                  )
+                )
+              ]
             )
           ),
           new Container(
@@ -60,9 +99,9 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  new IndicatorWidget(count:this.expenses, label:"Dépenses enregistrées"),
-                  new IndicatorWidget(count:this.days, label:"Jours restants"),
-                  new IndicatorWidget(count:this.salary, label:"€ de salaire")
+                  new IndicatorWidget(count:this.expensesCount, label:"Dépenses enregistrées"),
+                  new IndicatorWidget(count:this.daysLeft, label:"Jours restants"),
+                  new IndicatorWidget(count:this.displaySalary, label:"€ de salaire")
               ]
             )
           )
@@ -72,10 +111,6 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
         Navigator.pushNamed(context, '/add');
       })
     );
-  }
-
-  void _displayAddForm(){
-    print("bouboup");
   }
 }
 

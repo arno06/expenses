@@ -5,21 +5,26 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
+import 'HomeWidget.dart';
+import 'package:expenses/data/expense.dart';
+import 'package:expenses/data/settings.dart';
+
+
 class ExpenseFormWidget extends StatefulWidget{
-  const ExpenseFormWidget({Key key}):super(key:key);
+  const ExpenseFormWidget({Key key, this.settings}):super(key:key);
+
+  final Settings settings;
 
   @override
-  ExpenseFormState createState() => new ExpenseFormState();
-}
-
-class Expense
-{
-  double value = 0.0;
-  String categories = "";
-  DateTime date;
+  ExpenseFormState createState() => new ExpenseFormState(this.settings);
 }
 
 class ExpenseFormState extends State<ExpenseFormWidget>{
+
+  ExpenseFormState(Settings this.settings);
+
+  final Settings settings;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
@@ -47,33 +52,8 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
     final FormState form = _formKey.currentState;
 
     if(form.validate()){
-      var formatter = new DateFormat("yyyy-MM-dd");
-      String url = 'https://api.arnaud-nicolas.fr/expenses/';
-      var client = createHttpClient();
-      var response  = await client.post(url, body:{"data":'[{"value_expense":'+_value.toString()+', "categories_expense":"'+_categories+'", "date_expense":"'+formatter.format(_selectedDate)+'"}]'});
-
-      var b = JSON.decode(response.body);
-
-      var icon;
-      var message;
-      if(b.containsKey("response")){
-        Navigator.pop(this.context);
-      }
-      else{
-        icon = Icons.sentiment_neutral;
-        message = "Une erreur est apparue lors de l'enregistrement.";
-
-        _scaffoldKey.currentState.showSnackBar(new SnackBar(
-            content: new Row(
-                children: <Widget>[
-                  new Icon(icon),
-                  new Text(message)
-                ]
-            ),
-            backgroundColor: Colors.red
-        ));
-      }
-
+      settings.addExpense(_value, _selectedDate, _categories);
+      Navigator.pop(this.context);
     }
   }
 
