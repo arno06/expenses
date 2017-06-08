@@ -25,6 +25,8 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
     });
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   final Settings settings;
   
   int expensesCount = 0;
@@ -70,21 +72,30 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext pContext){
     return new Scaffold(
+      key: _scaffoldKey,
+      drawer: new HomeDrawer(),
       backgroundColor: const Color(0xFFeaeaea),
       body: new Column(
         children: <Widget>[
           new Container(
-            padding:const EdgeInsets.only(top:60.0),
+            padding:const EdgeInsets.only(top:30.0),
             decoration: new BoxDecoration(color: const Color(0xFF006978)),
             child:new Stack(
               children: <Widget>[
                 new Container(
+                  padding:const EdgeInsets.only(left:10.0),
+                  child: new IconButton(icon: new Icon(Icons.menu, color: Colors.white), onPressed: (){
+                    _scaffoldKey.currentState.openDrawer();
+                  }),
+                ),
+                new Container(
+                  padding: const EdgeInsets.only(top:50.0),
                   child:new Center(
                     child: new PieChart(value:this.value)
                   )
                 ),
                 new Container(
-                  padding: const EdgeInsets.only(top:70.0),
+                  padding: const EdgeInsets.only(top:120.0),
                   child: new Center(
                     child: new Text(this.value.round().toString()+"%",
                         style: new TextStyle(
@@ -149,7 +160,10 @@ class IndicatorWidget extends StatelessWidget{
         children: <Widget>[
           new Row(
             children: <Widget>[
-              new Icon(this.icon,size: 12.0, color:Colors.grey),
+              new Container(
+                margin:const EdgeInsets.only(right:5.0),
+                child: new Icon(this.icon,size: 12.0, color:Colors.grey),
+              ),
               new Text(this.label, style:new TextStyle(fontSize: 10.0, color: Colors.grey))
             ],
           ),
@@ -227,5 +241,59 @@ class PiePainter extends CustomPainter{
   @override
   bool shouldRepaint(PiePainter pOldPainter){
     return this.value  != pOldPainter.value;
+  }
+}
+
+class HomeDrawer extends StatefulWidget{
+
+  @override
+  _HomeDrawerState createState() => new _HomeDrawerState();
+}
+
+class _HomeDrawerState extends State<HomeDrawer>{
+
+  @override
+  Widget build(BuildContext pContext){
+
+    List<Map> items = <Map>[
+      {
+        "label": "Accueil",
+        "icon": Icons.home,
+        "route": "/home"
+      },
+      {
+        "label": "Dépenses",
+        "icon": Icons.view_list,
+        "route": "/expenses"
+      },
+      {
+        "label": "Paramètres",
+        "icon": Icons.settings,
+        "route": "/settings"
+      }
+    ];
+
+    return new Drawer(
+      child: new ListView(
+        children: <Widget>[
+          new DrawerHeader(
+              child: new Container(
+                child: new Image.asset("assets/expenses_icon.png"),
+              )
+          ),
+          new Column(
+            children: items.map((Map pMap){
+              return new ListTile(
+                leading: new CircleAvatar(child: new Icon(pMap["icon"]),),
+                title: new Text(pMap["label"]),
+                onTap: (){
+                  Navigator.pushNamed(pContext, "/expenses");
+                },
+              );
+            }).toList(),
+          )
+        ],
+      ),
+    );
   }
 }

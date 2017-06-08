@@ -21,32 +21,38 @@ class Settings extends Object with ChangeNotifier{
     return exp;
   }
 
+  Future<Null> removeExpense(Expense pExpense) async{
+    _expensesData.expenses.remove(pExpense);
+    notifyChange(const ChangeRecord());
+    _saveExpensesData();
+  }
+
   Future<ExpensesData> get expensesData async{
-    if(!_opened){
-      _expensesData = new ExpensesData();
-      try{
 
-        File file = await _getLocalFile();
-
-        String content = await file.readAsString();
-
-        Map data = JSON.decode(content);
-        _expensesData.fromMap(data);
-
-      } on FileSystemException{
-        print('Settings.getExpensesData::unable to get File data');
-      }
-
-      _opened = true;
+    if(_opened) {
+      return _expensesData;
     }
+
+    _expensesData = new ExpensesData();
+    try{
+      File file = await _getLocalFile();
+
+      String content = await file.readAsString();
+
+      Map data = JSON.decode(content);
+      _expensesData.fromMap(data);
+
+    } on FileSystemException{
+      print('Settings.getExpensesData::unable to get File data');
+    }
+
+    _opened = true;
     return _expensesData;
   }
 
   Future<Null> _saveExpensesData() async{
     File localFile = await _getLocalFile();
     Map map = _expensesData.toMap();
-    print(map);
-    print(JSON.encode(map));
     await localFile.writeAsString(JSON.encode(_expensesData.toMap()));
   }
 
@@ -62,11 +68,12 @@ class ExpensesData{
   int salary = 2897;
   DateTime startDate = new DateTime(2017, 5, 27);
   DateTime endDate = new DateTime(2017, 6, 27);
-  List<Expense> expenses = <Expense>[
-    new Expense(9.50, new DateTime(2017, 5, 28), "manger/pro/subway"),
-    new Expense(9.50, new DateTime(2017, 5, 29), "manger/pro/subway"),
-    new Expense(9.50, new DateTime(2017, 5, 30), "manger/pro/subway")
-  ];
+  List<Expense> expenses = <Expense>[];
+
+  void reset(){
+    salary = 0;
+    expenses = [];
+  }
 
   void fromMap(Map pMap){
     if(pMap.containsKey('salary')){

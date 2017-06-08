@@ -135,7 +135,7 @@ class _DatePicker extends StatelessWidget{
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            new Text(new DateFormat.yMMMd().format(dateValue), style:textStyle),
+                            new Text(new DateFormat.yMMMd("fr_FR").format(dateValue), style:textStyle),
                             new Icon(Icons.arrow_drop_down, color:Theme.of(pContext).brightness == Brightness.light ? Colors.grey.shade700: Colors.white70)
                           ]
                       )
@@ -147,10 +147,11 @@ class _DatePicker extends StatelessWidget{
 
   Future<Null> _showDatePicker(BuildContext pContext) async{
     final DateTime picked = await showDatePicker(
-        context: pContext,
-        initialDate: dateValue,
-        firstDate: new DateTime(2015, 8),
-        lastDate: new DateTime(2101));
+      context: pContext,
+      initialDate: dateValue,
+      firstDate: new DateTime(2015, 8),
+      lastDate: new DateTime(2101),
+    );
 
     if(picked != null && picked != dateValue)
       dateChanged(picked);
