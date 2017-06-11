@@ -1,4 +1,4 @@
-package com.yourcompany.expenses;
+package fr.arnaud_nicolas.expenses;
 
 import android.os.Bundle;
 

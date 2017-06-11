@@ -63,10 +63,10 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
     animation.addListener((){
       setState((){
         this.value = lerpDouble(this.value, currentPercentage, animation.value);
-        this.expensesCount = lerpDouble(this.expensesCount.toDouble(), data.expenses.length, animation.value).round();
-        this.daysLeft = lerpDouble(this.daysLeft.toDouble(), daysLeft, animation.value).round();
-        this.displaySalary = lerpDouble(this.displaySalary.toDouble(), data.salary, animation.value).round();
-        this.savings = lerpDouble(this.savings, totalSavings, animation.value).round();
+        this.expensesCount = lerpDouble(this.expensesCount.toDouble(), data.expenses.length, animation.value).floor();
+        this.daysLeft = lerpDouble(this.daysLeft.toDouble(), daysLeft, animation.value).ceil();
+        this.displaySalary = lerpDouble(this.displaySalary.toDouble(), data.salary, animation.value).floor();
+        this.savings = lerpDouble(this.savings, totalSavings, animation.value).ceil();
       });
     });
     animation.forward();

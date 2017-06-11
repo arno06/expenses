@@ -1,6 +1,6 @@
-# expenses
+# Expenses
 
-A new flutter project.
+A budget app using Flutter.
 
 ## Getting Started
 
