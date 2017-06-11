@@ -16,23 +16,13 @@ class ExpensesWidget extends StatefulWidget{
 }
 
 class _ExpensesWidgetState extends State<ExpensesWidget>{
-  _ExpensesWidgetState(this.settings);
+  _ExpensesWidgetState(this.settings){
+    this.expenses = this.settings.expenses;
+  }
 
   final Settings settings;
 
   List<Expense> expenses = [];
-
-
-  Future<Null> initList() async{
-    ExpensesData expData = await settings.expensesData;
-    this.expenses = expData.expenses;
-  }
-
-  @override
-  void initState(){
-    super.initState();
-    this.initList();
-  }
 
   Widget buildItem(Expense pExpense){
     ThemeData theme = Theme.of(context);

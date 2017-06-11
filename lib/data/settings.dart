@@ -6,6 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 
 class Settings extends Object with ChangeNotifier{
+  Settings(){
+    _loadData();
+  }
 
   static const String FILE = "data.json";
 
@@ -16,7 +19,6 @@ class Settings extends Object with ChangeNotifier{
   Future<Expense> addExpense(double pValue, DateTime pDate, String pCategories) async{
     Expense exp = new Expense(pValue, pDate, pCategories);
     this._expensesData.expenses.add(exp);
-    notifyChange(const ChangeRecord());
     await _saveExpensesData();
     return exp;
   }
@@ -32,7 +34,23 @@ class Settings extends Object with ChangeNotifier{
     if(_opened) {
       return _expensesData;
     }
+   await _loadData();
+    return _expensesData;
+  }
 
+  Future<Null> _saveExpensesData() async{
+    File localFile = await _getLocalFile();
+    Map map = _expensesData.toMap();
+    await localFile.writeAsString(JSON.encode(map));
+    notifyChange(const ChangeRecord());
+  }
+
+  Future<File> _getLocalFile() async{
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    return new File(dir+'/'+Settings.FILE);
+  }
+
+  Future<Null> _loadData() async{
     _expensesData = new ExpensesData();
     try{
       File file = await _getLocalFile();
@@ -47,27 +65,47 @@ class Settings extends Object with ChangeNotifier{
     }
 
     _opened = true;
-    return _expensesData;
   }
 
-  Future<Null> _saveExpensesData() async{
-    File localFile = await _getLocalFile();
-    Map map = _expensesData.toMap();
-    await localFile.writeAsString(JSON.encode(_expensesData.toMap()));
+  int get salary{
+    return _expensesData.salary;
   }
 
-  Future<File> _getLocalFile() async{
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    return new File(dir+'/'+Settings.FILE);
+  set salary(int pValue){
+    _expensesData.salary = pValue;
+    _saveExpensesData();
   }
 
+  bool get displaySalary{
+    if(_expensesData == null)
+      return false;
+    return _expensesData.displaySalary;
+  }
+
+  set displaySalary(bool pValue){
+    _expensesData.displaySalary = pValue;
+    _saveExpensesData();
+  }
+
+  int get salaryDay{
+    return _expensesData.salaryDay;
+  }
+
+  set salaryDay(int pValue){
+    _expensesData.salaryDay = pValue;
+    _saveExpensesData();
+  }
+
+  List<Expense> get expenses{
+    return _expensesData.expenses;
+  }
 }
 
 class ExpensesData{
 
+  bool displaySalary = true;
   int salary = 2897;
-  DateTime startDate = new DateTime(2017, 5, 27);
-  DateTime endDate = new DateTime(2017, 6, 27);
+  int salaryDay = 27;
   List<Expense> expenses = <Expense>[];
 
   void reset(){
@@ -78,14 +116,6 @@ class ExpensesData{
   void fromMap(Map pMap){
     if(pMap.containsKey('salary')){
       salary = pMap['salary'];
-    }
-
-    if(pMap.containsKey('startDate')){
-      startDate = DateTime.parse(pMap['startDate']);
-    }
-
-    if(pMap.containsKey('endDate')){
-      endDate = DateTime.parse(pMap['endDate']);
     }
 
     if(pMap.containsKey('expenses') && pMap['expenses'].length > 0){
@@ -99,14 +129,20 @@ class ExpensesData{
       }
       this.expenses = expenses;
     }
+
+    if(pMap.containsKey("displaySalary"))
+      displaySalary = pMap["displaySalary"];
+
+    if(pMap.containsKey("salaryDay"))
+      salaryDay = pMap["salaryDay"];
   }
 
   Map toMap(){
     Map data = new Map();
 
     data['salary'] = salary;
-    data['startDate'] = startDate.toString();
-    data['endDate'] = startDate.toString();
+    data['displaySalary'] = displaySalary;
+    data['salaryDay'] = salaryDay;
 
     List<String> expenses = [];
 

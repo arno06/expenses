@@ -32,7 +32,7 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
   int expensesCount = 0;
   int daysLeft = 0;
   int displaySalary = 0;
-  int savings = 0;
+  int savings;
 
   double value = 0.0;
   AnimationController animation;
@@ -46,11 +46,20 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
   Future<Null> refreshValues() async{
     DateTime today = new DateTime.now();
     ExpensesData data = await settings.expensesData;
-    int daysLeft = data.endDate.difference(today).inDays;
+
+    DateTime cd = new DateTime(today.year, today.month, settings.salaryDay);
+
+    if(cd.isBefore(today)){
+      cd = new DateTime(today.year, today.month+1, settings.salaryDay);
+    }
+
+    int daysLeft = cd.difference(today).inDays;
     animation = new AnimationController(vsync: this, duration:const Duration(milliseconds:5000));
     double total = data.expenses.fold(0.0, (double value, Expense element)=>value+element.value);
     int currentPercentage = ((total / data.salary) * 100).round();
     int totalSavings = (data.salary - total).round();
+    if(savings == null)
+      savings = data.salary;
     animation.addListener((){
       setState((){
         this.value = lerpDouble(this.value, currentPercentage, animation.value);
@@ -71,6 +80,13 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext pContext){
+    int savingColor = this.savings == null ?0x00000000:0xFF006978;
+    List<Widget> indicatorsRow = <Widget>[
+      new IndicatorWidget(count:this.expensesCount, label:"Dépenses", icon:Icons.list),
+      new IndicatorWidget(count:this.daysLeft, label:"Jours", icon:Icons.schedule),
+    ];
+    if(settings != null && settings.displaySalary)
+      indicatorsRow.add(new IndicatorWidget(count:this.displaySalary, label:"Salaire", icon:Icons.euro_symbol));
     return new Scaffold(
       key: _scaffoldKey,
       drawer: new HomeDrawer(),
@@ -79,7 +95,7 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
         children: <Widget>[
           new Container(
             padding:const EdgeInsets.only(top:30.0),
-            decoration: new BoxDecoration(color: const Color(0xFF006978)),
+            decoration: new BoxDecoration(color: const Color(0xFF006978), boxShadow: <BoxShadow>[const BoxShadow(blurRadius: 5.0, color: const Color(0xaa000000)),]),
             child:new Stack(
               children: <Widget>[
                 new Container(
@@ -114,11 +130,7 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
             child:
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  new IndicatorWidget(count:this.expensesCount, label:"Dépenses", icon:Icons.list),
-                  new IndicatorWidget(count:this.daysLeft, label:"Jours", icon:Icons.schedule),
-                  new IndicatorWidget(count:this.displaySalary, label:"Salaire", icon:Icons.euro_symbol)
-              ]
+                children: indicatorsRow
             )
           ),
           new Container(
@@ -129,11 +141,14 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
                   new Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      new Icon(Icons.account_balance, color:Colors.grey, size:14.0),
+                      new Container(
+                        padding:const EdgeInsets.only(right:10.0),
+                        child: new Icon(Icons.euro_symbol, color:Colors.grey, size:14.0),
+                      ),
                       new Text("Economies estimées", style: new TextStyle(color:Colors.grey, fontSize: 14.0)),
                     ],
                   ),
-                  new Text(this.savings.toString(), style: new TextStyle(color:const Color(0xFF006978), fontSize: 80.0, fontWeight: FontWeight.bold))
+                  new Text(this.savings.toString(), style: new TextStyle(color:new Color(savingColor), fontSize: 80.0, fontWeight: FontWeight.bold))
                 ],
               ),
             ),
@@ -284,10 +299,13 @@ class _HomeDrawerState extends State<HomeDrawer>{
           new Column(
             children: items.map((Map pMap){
               return new ListTile(
-                leading: new CircleAvatar(child: new Icon(pMap["icon"]),),
+                leading: new Icon(pMap["icon"]),
                 title: new Text(pMap["label"]),
                 onTap: (){
-                  Navigator.pushNamed(pContext, "/expenses");
+                  Navigator.pop(context);
+                  if(pMap["route"] == "/home")
+                    return;
+                  Navigator.pushNamed(pContext, pMap["route"]);
                 },
               );
             }).toList(),
