@@ -16,8 +16,8 @@ class Settings extends Object with ChangeNotifier{
 
   ExpensesData _expensesData;
 
-  Future<Expense> addExpense(double pValue, DateTime pDate, String pCategories) async{
-    Expense exp = new Expense(pValue, pDate, pCategories);
+  Future<Expense> addExpense(double pValue, DateTime pDate, String pCategories, bool pIsRecurrent) async{
+    Expense exp = new Expense(pValue, pDate, pCategories, pIsRecurrent);
     this._expensesData.expenses.add(exp);
     await _saveExpensesData();
     return exp;
@@ -99,6 +99,28 @@ class Settings extends Object with ChangeNotifier{
   List<Expense> get expenses{
     return _expensesData.expenses;
   }
+
+  List<Expense> getExpenses(int pMonth){
+    List<Expense> list = [];
+
+    DateTime today = new DateTime.now();
+    DateTime end = new DateTime(today.year, today.month, this.salaryDay);
+
+    if(end.isBefore(today))
+      end = new DateTime(today.year, today.month+1, this.salaryDay);
+
+    DateTime start = new DateTime(today.year, end.month-1, this.salaryDay);
+
+    Expense exp;
+    for(var i = 0, max = expenses.length; i<max; i++){
+      exp = expenses[i];
+      if(exp.isRecurrent || exp.date.isAtSameMomentAs(start) || exp.date.isAtSameMomentAs(end) || (exp.date.isAfter(start) && exp.date.isBefore(end))){
+        list.add(exp);
+      }
+    }
+
+    return list;
+  }
 }
 
 class ExpensesData{
@@ -122,9 +144,13 @@ class ExpensesData{
       List<Expense> expenses = [];
       Map map;
       Expense exp;
+      bool isRecurrent;
       for(var i = 0, max = pMap['expenses'].length; i<max; i++){
         map = JSON.decode(pMap['expenses'][i]);
-        exp = new Expense(map['value'], DateTime.parse(map['date']), map['categories']);
+        isRecurrent = false;
+        if(map.containsKey("isRecurrent"))
+          isRecurrent = map["isRecurrent"];
+        exp = new Expense(map['value'], DateTime.parse(map['date']), map['categories'], isRecurrent);
         expenses.add(exp);
       }
       this.expenses = expenses;
@@ -154,6 +180,7 @@ class ExpensesData{
       map['value'] = exp.value;
       map['date'] = exp.date.toString();
       map['categories'] = exp.categories;
+      map['isRecurrent'] = exp.isRecurrent;
       expenses.add(JSON.encode(map));
     }
 

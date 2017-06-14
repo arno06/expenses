@@ -31,6 +31,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
   DateTime _selectedDate = new DateTime.now();
   double _value;
   String _categories;
+  bool _isRecurrent = false;
 
   String _validateValue(String pValue){
     pValue = pValue.trim();
@@ -52,7 +53,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
     final FormState form = _formKey.currentState;
 
     if(form.validate()){
-      settings.addExpense(_value, _selectedDate, _categories);
+      settings.addExpense(_value, _selectedDate, _categories, _isRecurrent);
       Navigator.pop(this.context);
     }
   }
@@ -97,6 +98,20 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                           labelText: "Catégorie"
                       ),
                       validator: _validateCategories
+                  ),
+                  new ListTile(
+                    leading:new Icon(Icons.update),
+                    title: new Text("Dépense récurrente"),
+                    trailing: new Checkbox(value: _isRecurrent, onChanged: (bool pValue){
+                      setState((){
+                        _isRecurrent = pValue;
+                      });
+                    }),
+                    onTap: (){
+                      setState((){
+                        _isRecurrent = !_isRecurrent;
+                      });
+                    },
                   )
                 ]
             )

@@ -53,20 +53,17 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
       cd = new DateTime(today.year, today.month+1, settings.salaryDay);
     }
 
-    int daysLeft = cd.difference(today).inDays;
+    List<Expense> list = settings.getExpenses((new DateTime.now().month));
+    this.daysLeft = cd.difference(today).inDays;
     animation = new AnimationController(vsync: this, duration:const Duration(milliseconds:5000));
-    double total = data.expenses.fold(0.0, (double value, Expense element)=>value+element.value);
+    double total = list.fold(0.0, (double value, Expense element)=>value+element.value);
     int currentPercentage = ((total / data.salary) * 100).round();
-    int totalSavings = (data.salary - total).round();
-    if(savings == null)
-      savings = data.salary;
+    this.savings = (data.salary - total).round();
+    this.expensesCount = list.length;
+    this.displaySalary = data.salaryDay;
     animation.addListener((){
       setState((){
         this.value = lerpDouble(this.value, currentPercentage, animation.value);
-        this.expensesCount = lerpDouble(this.expensesCount.toDouble(), data.expenses.length, animation.value).floor();
-        this.daysLeft = lerpDouble(this.daysLeft.toDouble(), daysLeft, animation.value).ceil();
-        this.displaySalary = lerpDouble(this.displaySalary.toDouble(), data.salary, animation.value).floor();
-        this.savings = lerpDouble(this.savings, totalSavings, animation.value).ceil();
       });
     });
     animation.forward();

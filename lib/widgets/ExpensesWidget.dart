@@ -17,7 +17,10 @@ class ExpensesWidget extends StatefulWidget{
 
 class _ExpensesWidgetState extends State<ExpensesWidget>{
   _ExpensesWidgetState(this.settings){
-    this.expenses = this.settings.expenses;
+    this.expenses = this.settings.getExpenses((new DateTime.now().month));
+    this.expenses.sort((Expense a, Expense b){
+      return a.date.compareTo(b.date);
+    });
   }
 
   final Settings settings;
@@ -27,6 +30,10 @@ class _ExpensesWidgetState extends State<ExpensesWidget>{
   Widget buildItem(Expense pExpense){
     ThemeData theme = Theme.of(context);
     DateFormat format = new DateFormat.yMMMd("fr_FR");
+    String dateDetail = format.format(pExpense.date);
+    if(pExpense.isRecurrent){
+      dateDetail = "le "+pExpense.date.day.toString()+" du mois";
+    }
     return new Dismissible(
       direction: DismissDirection.endToStart,
       background: new Container(
@@ -47,7 +54,7 @@ class _ExpensesWidgetState extends State<ExpensesWidget>{
         child: new ListTile(
           title: new Text(pExpense.value.toString()+"€"),
           subtitle: new Text(pExpense.categories),
-          trailing: new Text(format.format(pExpense.date)),
+          trailing: new Text(dateDetail),
         )
       )
     );
