@@ -102,9 +102,16 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
                   }),
                 ),
                 new Container(
+                  alignment: const FractionalOffset(1.0, 0.0),
+                  padding:const EdgeInsets.only(right:10.0),
+                  child: new IconButton(icon: new Icon(Icons.show_chart, color: Colors.white), onPressed: (){
+                    Navigator.pushNamed(context, '/charts');
+                  }),
+                ),
+                new Container(
                   padding: const EdgeInsets.only(top:50.0),
                   child:new Center(
-                    child: new PieChart(value:this.value)
+                    child: new ArcChart(value:this.value)
                   )
                 ),
                 new Container(
@@ -185,8 +192,8 @@ class IndicatorWidget extends StatelessWidget{
   }
 }
 
-class PieChart extends StatelessWidget{
-  PieChart({Key key, this.value}):super(key:key);
+class ArcChart extends StatelessWidget{
+  ArcChart({Key key, this.value}):super(key:key);
 
   final double value;
 
@@ -196,14 +203,14 @@ class PieChart extends StatelessWidget{
       width:200.0,
       height:200.0,
       child: new CustomPaint(
-        painter:new PiePainter(value:this.value)
+        painter:new ArcPainter(value:this.value)
       )
     );
   }
 }
 
-class PiePainter extends CustomPainter{
-  PiePainter({this.value}):super();
+class ArcPainter extends CustomPainter{
+  ArcPainter({this.value});
 
   double value;
 
@@ -251,7 +258,7 @@ class PiePainter extends CustomPainter{
   }
 
   @override
-  bool shouldRepaint(PiePainter pOldPainter){
+  bool shouldRepaint(ArcPainter pOldPainter){
     return this.value  != pOldPainter.value;
   }
 }
@@ -272,6 +279,11 @@ class _HomeDrawerState extends State<HomeDrawer>{
         "label": "Accueil",
         "icon": Icons.home,
         "route": "/home"
+      },
+      {
+        "label": "Statistiques",
+        "icon": Icons.show_chart,
+        "route": "/charts"
       },
       {
         "label": "Dépenses",
