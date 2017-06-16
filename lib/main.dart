@@ -7,6 +7,7 @@ import 'package:expenses/widgets/HomeWidget.dart';
 import 'package:expenses/widgets/ExpensesWidget.dart';
 import 'package:expenses/widgets/SettingsWidget.dart';
 import 'package:expenses/widgets/ChartsWidget.dart';
+import 'package:expenses/widgets/MapEditorWidget.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/expenses': (BuildContext context) => new ExpensesWidget(settings:this.settings),
         '/settings': (BuildContext context) => new SettingsWidget(settings:this.settings),
         '/charts': (BuildContext context) => new ChartsWidget(settings:this.settings),
+        '/categories/edit': (BuildContext context) => new MapEditorWidget(settings:this.settings),
       }
     );
   }

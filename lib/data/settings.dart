@@ -100,6 +100,15 @@ class Settings extends Object with ChangeNotifier{
     return _expensesData.expenses;
   }
 
+  Map<String, dynamic> get categories{
+    return _expensesData.categories;
+  }
+
+  set categories(Map<String, dynamic> pValue){
+    _expensesData.categories = pValue;
+    _saveExpensesData();
+  }
+
   List<Expense> getExpenses(int pMonth){
     List<Expense> list = [];
 
@@ -129,6 +138,34 @@ class ExpensesData{
   int salary = 2897;
   int salaryDay = 27;
   List<Expense> expenses = <Expense>[];
+  Map<String, dynamic> categories = <String, dynamic>{
+    'assurances vie':{},
+    'manger':{
+      'pro':{
+        'class crout':{},
+        'pates':{},
+        'subway':{}
+      },
+      'extra':{
+        'restaurant':{},
+      },
+      'courses':{}
+    },
+    'pret':{
+      'appartement':{}
+    },
+    'transport':{
+      'pass navigo':{},
+      'moto':{
+        'entretien':{},
+        'essence':{}
+      },
+      'voiture':{
+        'entretien':{},
+        'essence':{}
+      }
+    },
+  };
 
   void reset(){
     salary = 0;
@@ -138,6 +175,10 @@ class ExpensesData{
   void fromMap(Map pMap){
     if(pMap.containsKey('salary')){
       salary = pMap['salary'];
+    }
+
+    if(pMap.containsKey('categories')){
+      categories = pMap['categories'];
     }
 
     if(pMap.containsKey('expenses') && pMap['expenses'].length > 0){
@@ -169,6 +210,7 @@ class ExpensesData{
     data['salary'] = salary;
     data['displaySalary'] = displaySalary;
     data['salaryDay'] = salaryDay;
+    data['categories'] = categories;
 
     List<String> expenses = [];
 

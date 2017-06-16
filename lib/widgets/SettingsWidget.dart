@@ -145,6 +145,14 @@ class _SettingsWidgetState extends State<SettingsWidget>{
             },
           ),
           new Divider(),
+          new ListTile(
+            title: new Text("Gérer les catégories"),
+            trailing: new Icon(Icons.navigate_next),
+            onTap: (){
+              Navigator.pushNamed(context, '/categories/edit');
+            },
+          ),
+          new Divider(),
         ]
       ),
     );
