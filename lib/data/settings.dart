@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 class Settings extends Object with ChangeNotifier{
   Settings(){
@@ -100,11 +101,11 @@ class Settings extends Object with ChangeNotifier{
     return _expensesData.expenses;
   }
 
-  Map<String, dynamic> get categories{
+  List<Category> get categories{
     return _expensesData.categories;
   }
 
-  set categories(Map<String, dynamic> pValue){
+  set categories(List<Category> pValue){
     _expensesData.categories = pValue;
     _saveExpensesData();
   }
@@ -138,34 +139,33 @@ class ExpensesData{
   int salary = 2897;
   int salaryDay = 27;
   List<Expense> expenses = <Expense>[];
-  Map<String, dynamic> categories = <String, dynamic>{
-    'assurances vie':{},
-    'manger':{
-      'pro':{
-        'class crout':{},
-        'pates':{},
-        'subway':{}
-      },
-      'extra':{
-        'restaurant':{},
-      },
-      'courses':{}
-    },
-    'pret':{
-      'appartement':{}
-    },
-    'transport':{
-      'pass navigo':{},
-      'moto':{
-        'entretien':{},
-        'essence':{}
-      },
-      'voiture':{
-        'entretien':{},
-        'essence':{}
-      }
-    },
-  };
+
+  List<Category> categories = <Category>[
+    new Category('Assurance vie', const Color(0xffff0000)),
+    new Category('Manger', const Color(0xff00ff00), [
+      new Category('Pro', const Color(0xff33ff33), [
+        new Category('ClassCrout', const Color(0xffaaffaa)),
+        new Category('Pates', const Color(0xffaaffaa)),
+        new Category('Subway', const Color(0xffaaffaa)),
+      ]),
+      new Category('Extra', const Color(0xff00ff00), []),
+      new Category('Courses', const Color(0xff00ff00), []),
+    ]),
+    new Category('Prêt', const Color(0xff0000ff), [
+      new Category('Appartement', const Color(0xff6666ff), []),
+    ]),
+    new Category('Transport', const Color(0xffff00ff), [
+      new Category('PassNavigo', const Color(0xffff66ff), []),
+      new Category('Moto', const Color(0xffff66ff), [
+        new Category('Entretien', const Color(0xffffaaff), []),
+        new Category('Essence', const Color(0xffffaaff), []),
+      ]),
+      new Category('Voiture', const Color(0xffff66ff), [
+        new Category('Entretien', const Color(0xffffaaff), []),
+        new Category('Essence', const Color(0xffffaaff), []),
+      ]),
+    ]),
+  ];
 
   void reset(){
     salary = 0;
@@ -213,7 +213,6 @@ class ExpensesData{
     data['categories'] = categories;
 
     List<String> expenses = [];
-
     Expense exp;
     Map map;
     for(var i = 0, max = this.expenses.length; i<max; i++){
@@ -229,5 +228,40 @@ class ExpensesData{
     data['expenses'] = expenses;
 
     return data;
+  }
+}
+
+class Category{
+  Category([this.label = "Category", this.color = const Color(0xffff0000), this.children = const []]);
+
+  String label;
+  Color color;
+  List<Category> children;
+
+  Map toMap(){
+    Map m = new Map();
+    m['label'] = label;
+    m['color'] = color.value;
+    m['children'] = children.map((Category c){
+      return c.toMap();
+    }).toList();
+    return m;
+  }
+
+  void fromMap(Map pMap){
+    if(pMap.containsKey('label')){
+      label = pMap['label'];
+    }
+
+    if(pMap.containsKey('color')){
+      color = new Color(pMap['color']);
+    }
+
+    if(pMap.containsKey('children')){
+      List<Map> children = pMap['children'];
+      this.children = children.map((Map pMap){
+        return new Category()..fromMap(pMap);
+      }).toList();
+    }
   }
 }
