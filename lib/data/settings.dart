@@ -178,7 +178,10 @@ class ExpensesData{
     }
 
     if(pMap.containsKey('categories')){
-      categories = pMap['categories'];
+      categories = pMap['categories'].map((Map map){
+        Category cat = new Category()..fromMap(map);
+        return cat;
+      }).toList();
     }
 
     if(pMap.containsKey('expenses') && pMap['expenses'].length > 0){
@@ -210,7 +213,7 @@ class ExpensesData{
     data['salary'] = salary;
     data['displaySalary'] = displaySalary;
     data['salaryDay'] = salaryDay;
-    data['categories'] = categories;
+    data['categories'] = categories.map((Category cat) => cat.toMap()).toList();
 
     List<String> expenses = [];
     Expense exp;
