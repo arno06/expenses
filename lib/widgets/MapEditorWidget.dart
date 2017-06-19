@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:expenses/data/settings.dart';
 
+typedef void ActionItemCallback(String value, Category category);
+
 class MapEditorWidget extends StatefulWidget{
 
   MapEditorWidget({this.settings});
@@ -15,17 +17,19 @@ class MapEditorWidget extends StatefulWidget{
 class _MapEditorWidgetState extends State<MapEditorWidget>{
   _MapEditorWidgetState(this.settings){
     categories = this.settings.categories;
-
-    items = categories.map((Category value){
-      return new _MapExpansionItem(category:value);
-    }).toList();
-
+    setItems();
   }
 
   Settings settings;
   List<Category> categories;
 
   List<_MapExpansionItem> items;
+
+  void setItems(){
+    items = categories.map((Category value){
+      return new _MapExpansionItem(category:value, actionHandler: this.itemCallBack);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext pContext){
@@ -45,17 +49,62 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
       )
     );
   }
+
+  void itemCallBack(String pValue, Category pCat){
+
+    find(List<Category>pCats, Category pCat){
+      List<Category> cats = <Category>[];
+
+      pCats.forEach((Category cat){
+
+        var skip = false;
+
+        if(cat.compareTo(pCat) == 1) {
+          switch(pValue){
+            case "new":
+
+              break;
+            case "remove":
+              skip = true;
+              break;
+            case "edit":
+
+              break;
+          }
+        }
+
+        cat.children = find(cat.children, pCat);
+
+        if(!skip){
+          cats.add(cat);
+        }
+      });
+
+      print(cats);
+
+      return cats;
+    }
+
+    categories = find(categories, pCat);
+
+    setState((){
+      setItems();
+    });
+
+    print(pCat.label+" "+pValue);
+  }
 }
 
 class _MapExpansionItem{
 
-  _MapExpansionItem({this.category}){
+  _MapExpansionItem({this.category, this.actionHandler}){
     items = [];
     this.category.children.forEach((Category value){
-      items.add(new _MapExpansionItem(category:value));
+      items.add(new _MapExpansionItem(category:value, actionHandler: this.actionHandler));
     });
   }
 
+  ActionItemCallback actionHandler;
   Category category;
   bool isExpanded = false;
   List<_MapExpansionItem> items;
@@ -79,7 +128,11 @@ class _MapExpansionItem{
             child: new CircleAvatar(backgroundColor: category.color, radius: 10.0,),
           ),
           new Expanded(child: new Text(category.label)),
-          new PopupMenuButton(itemBuilder: (BuildContext pContext) => <PopupMenuEntry<String>>[
+          new PopupMenuButton(
+            onSelected: (String pValue){
+              actionHandler(pValue, category);
+            },
+            itemBuilder: (BuildContext pContext) => <PopupMenuEntry<String>>[
             const PopupMenuItem<String>(
               value: 'new',
               child: const ListTile(
@@ -105,5 +158,9 @@ class _MapExpansionItem{
         ],
       ),
     )]..addAll(children);
+  }
+
+  void action(String pType){
+
   }
 }

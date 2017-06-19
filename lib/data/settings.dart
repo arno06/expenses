@@ -234,12 +234,17 @@ class ExpensesData{
   }
 }
 
-class Category{
+class Category extends Comparable<Category>{
   Category([this.label = "Category", this.color = const Color(0xffff0000), this.children = const []]);
 
   String label;
   Color color;
   List<Category> children;
+
+  @override
+  int compareTo(Category other){
+    return this.label == other.label && this.color.toString() == other.color.toString()?1:0;
+  }
 
   Map toMap(){
     Map m = new Map();
