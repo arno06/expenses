@@ -80,8 +80,6 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
         }
       });
 
-      print(cats);
-
       return cats;
     }
 
@@ -90,8 +88,6 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
     setState((){
       setItems();
     });
-
-    print(pCat.label+" "+pValue);
   }
 }
 
@@ -158,9 +154,5 @@ class _MapExpansionItem{
         ],
       ),
     )]..addAll(children);
-  }
-
-  void action(String pType){
-
   }
 }
