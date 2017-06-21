@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 import 'package:expenses/data/settings.dart';
 
 typedef void ActionItemCallback(String value, Category category);
@@ -24,6 +24,8 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
   List<Category> categories;
 
   List<_MapExpansionItem> items;
+
+  Category cat;
 
   void setItems(){
     items = categories.map((Category value){
@@ -50,30 +52,84 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
     );
   }
 
-  void itemCallBack(String pValue, Category pCat){
+  String validateCategoryLabel(String pValue){
+    if(pValue.isEmpty){
+      return "Merci de préciser un nom de catégorie";
+    }
+    cat.label = pValue;
+    return null;
+  }
 
-    find(List<Category>pCats, Category pCat){
+  Future<Null> itemCallBack(String pValue, Category pCat) async{
+
+    GlobalKey<FormState> formKey = new GlobalKey<FormState>();
+
+    if(pValue == "new" || pValue == "edit"){
+      cat = pValue=="new"?new Category():new Category(pCat.label, pCat.color);
+      String dialogTitle = pValue=="new"?"Nouvelle catégorie":"Modification d'une catégorie";
+      String action = await showDialog(
+        context: context,
+        child: new AlertDialog(
+          title: new Text(dialogTitle),
+          content: new Form(
+            key: formKey,
+            child:
+            new TextFormField(
+              validator: validateCategoryLabel,
+              decoration:new InputDecoration(
+                icon:const Icon(Icons.category),
+                labelText: "Libellé",
+              ),
+              controller: new TextEditingController(text:cat.label),
+            )
+          ),
+          actions: <Widget>[
+            new FlatButton(
+                onPressed: (){Navigator.pop(context, null);},
+                child: const Text("Annuler")
+            ),
+            new FlatButton(
+                onPressed: (){Navigator.pop(context, "save");},
+                child: const Text("Enregistrer")
+            ),
+          ],
+        ),
+      );
+
+      if(action == "save"){
+        if(!formKey.currentState.validate()){
+          return;
+        }
+      }
+    }
+
+    walkTrough(List<Category>pCats, Category pCat){
       List<Category> cats = <Category>[];
 
       pCats.forEach((Category cat){
 
         var skip = false;
 
+        var found = false;
+
         if(cat.compareTo(pCat) == 1) {
+          found = true;
           switch(pValue){
             case "new":
-
+              cat.children.add(this.cat);
               break;
             case "remove":
               skip = true;
               break;
             case "edit":
-
+              cat.label = this.cat.label;
+              cat.color = this.cat.color;
               break;
           }
         }
 
-        cat.children = find(cat.children, pCat);
+        if(!found)
+          cat.children = walkTrough(cat.children, pCat);
 
         if(!skip){
           cats.add(cat);
@@ -83,7 +139,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
       return cats;
     }
 
-    categories = find(categories, pCat);
+    categories = walkTrough(categories, pCat);
 
     setState((){
       setItems();
