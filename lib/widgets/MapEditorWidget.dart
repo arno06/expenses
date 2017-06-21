@@ -141,6 +141,8 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
     categories = walkTrough(categories, pCat);
 
+    settings.categories = categories;
+
     setState((){
       setItems();
     });
