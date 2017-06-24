@@ -65,7 +65,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
     GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 
     if(pValue == "new" || pValue == "edit"){
-      cat = pValue=="new"?new Category():new Category(pCat.label, pCat.color);
+      cat = pValue=="new"?new Category('Catégorie', Color.lerp(pCat.color, Colors.white, 0.45)):new Category(pCat.label, pCat.color);
       String dialogTitle = pValue=="new"?"Nouvelle catégorie":"Modification d'une catégorie";
       String action = await showDialog(
         context: context,
@@ -103,7 +103,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
       }
     }
 
-    walkTrough(List<Category>pCats, Category pCat){
+    walkTrough(List<Category>pCats){
       List<Category> cats = <Category>[];
 
       pCats.forEach((Category cat){
@@ -129,7 +129,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
         }
 
         if(!found)
-          cat.children = walkTrough(cat.children, pCat);
+          cat.children = walkTrough(cat.children);
 
         if(!skip){
           cats.add(cat);
@@ -139,7 +139,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
       return cats;
     }
 
-    categories = walkTrough(categories, pCat);
+    categories = walkTrough(categories);
 
     settings.categories = categories;
 

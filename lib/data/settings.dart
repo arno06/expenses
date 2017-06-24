@@ -140,32 +140,7 @@ class ExpensesData{
   int salaryDay = 27;
   List<Expense> expenses = <Expense>[];
 
-  List<Category> categories = <Category>[
-    new Category('Assurance vie', const Color(0xffff0000)),
-    new Category('Manger', const Color(0xff00ff00), [
-      new Category('Pro', const Color(0xff33ff33), [
-        new Category('ClassCrout', const Color(0xffaaffaa)),
-        new Category('Pates', const Color(0xffaaffaa)),
-        new Category('Subway', const Color(0xffaaffaa)),
-      ]),
-      new Category('Extra', const Color(0xff00ff00), []),
-      new Category('Courses', const Color(0xff00ff00), []),
-    ]),
-    new Category('Prêt', const Color(0xff0000ff), [
-      new Category('Appartement', const Color(0xff6666ff), []),
-    ]),
-    new Category('Transport', const Color(0xffff00ff), [
-      new Category('PassNavigo', const Color(0xffff66ff), []),
-      new Category('Moto', const Color(0xffff66ff), [
-        new Category('Entretien', const Color(0xffffaaff), []),
-        new Category('Essence', const Color(0xffffaaff), []),
-      ]),
-      new Category('Voiture', const Color(0xffff66ff), [
-        new Category('Entretien', const Color(0xffffaaff), []),
-        new Category('Essence', const Color(0xffffaaff), []),
-      ]),
-    ]),
-  ];
+  List<Category> categories = <Category>[];
 
   void reset(){
     salary = 0;
@@ -235,11 +210,11 @@ class ExpensesData{
 }
 
 class Category extends Comparable<Category>{
-  Category([this.label = "Category", this.color = const Color(0xffff0000), this.children = const []]);
+  Category([this.label = "Category", this.color = const Color(0xffff0000)]);
 
   String label;
   Color color;
-  List<Category> children;
+  List<Category> children = <Category>[];
 
   @override
   int compareTo(Category other){
