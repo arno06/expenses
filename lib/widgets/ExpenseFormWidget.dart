@@ -1,12 +1,10 @@
-import 'dart:convert';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'dart:async';
 import 'package:intl/intl.dart';
 
-import 'HomeWidget.dart';
-import 'package:expenses/data/expense.dart';
 import 'package:expenses/data/settings.dart';
 
 
@@ -41,13 +39,6 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
     return null;
   }
 
-  String _validateCategories(String pValue){
-    _categories = pValue.trim();
-    if(_categories.length == 0)
-      return "Veuillez saisir au moins une catégorie";
-    return null;
-  }
-
   _postExpense() async{
     final FormState form = _formKey.currentState;
     if(form.validate()){
@@ -73,25 +64,19 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                 children: <Widget>[
                   new TextFormField(
                       decoration:new InputDecoration(
-                          icon:const Icon(Icons.euro_symbol),
-                          hintText: "Combien avez-vous dépensé?",
-                          labelText: "Dépense"
+                        icon:const Icon(Icons.euro_symbol),
+                        hintText: "Combien avez-vous dépensé?",
+                        labelText: "Dépense",
                       ),
                       keyboardType: TextInputType.number,
                       validator: _validateValue
                   ),
-                  new ListTile(
-                    leading:new Icon(Icons.update),
-                    title: new Text("Dépense récurrente"),
-                    trailing: new Checkbox(value: _isRecurrent, onChanged: (bool pValue){
-                      setState((){
-                        _isRecurrent = pValue;
-                      });
-                    }),
-                    onTap: (){
-                      setState((){
-                        _isRecurrent = !_isRecurrent;
-                      });
+                  new _CategoryPicker(
+                    labelText: "Catégorie",
+                    categories:settings.categories,
+                    value:_categories,
+                    categoryChanged: (String pValue){
+                      _categories = pValue;
                     },
                   ),
                   new _DatePicker(
@@ -103,12 +88,19 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                         });
                       }
                   ),
-                  new _CategoryPicker(
-                    labelText: "Catégorie",
-                    categories:settings.categories,
-                    value:_categories,
-                    categoryChanged: (String pValue){
-                      _categories = pValue;
+                  new ListTile(
+                    leading:new Icon(Icons.update),
+                    dense: true,
+                    title: new Text("Dépense récurrente"),
+                    trailing: new Checkbox(value: _isRecurrent, onChanged: (bool pValue){
+                      setState((){
+                        _isRecurrent = pValue;
+                      });
+                    }),
+                    onTap: (){
+                      setState((){
+                        _isRecurrent = !_isRecurrent;
+                      });
                     },
                   ),
                 ]
@@ -166,11 +158,12 @@ class _CategoryPicker extends StatelessWidget{
   @override
   Widget build(BuildContext pContext){
     final TextStyle textStyle = Theme.of(pContext).textTheme.title;
+    textStyle.apply(color:const Color(0xff555555));
     return new Row(
       children: <Widget>[
         new Container(
             margin:const EdgeInsets.only(right:11.0, left:12.0, top:10.0),
-            child:new Icon(Icons.assignment)
+            child:new Icon(Icons.assignment, color: const Color(0xff777777),)
         ),
         new Expanded(
             child: new InkWell(
@@ -243,11 +236,12 @@ class _DatePicker extends StatelessWidget{
   @override
   Widget build(BuildContext pContext){
     final TextStyle textStyle = Theme.of(pContext).textTheme.title;
+    textStyle.apply(color: const Color(0xff555555));
     return new Row(
         children:<Widget>[
           new Container(
               margin:const EdgeInsets.only(right:11.0, left:12.0, top:10.0),
-              child:new Icon(Icons.date_range)
+              child:new Icon(Icons.date_range, color:const Color(0xFF777777))
           ),
           new Expanded(
               child: new InkWell(
