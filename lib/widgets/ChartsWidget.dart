@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:expenses/data/settings.dart';
 import 'package:expenses/data/expense.dart';
 import 'package:expenses/utils/geom.dart';
+import 'package:expenses/utils/Dictionary.dart';
 
 class ChartsWidget extends StatefulWidget{
 
@@ -78,7 +79,7 @@ class _ChartsWidgetState extends State<ChartsWidget>{
     return new Scaffold(
       backgroundColor: const Color(0xfff3f8f9),
       appBar: new AppBar(
-        title: new Text("Statistiques ("+d.format(today)+")"),
+        title: new Text(Dictionary.term('metrics.title')+" ("+d.format(today)+")"),
       ),
       body: new ListView(
         children: <Widget>[

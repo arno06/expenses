@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:intl/intl.dart';
-
 import 'package:expenses/data/settings.dart';
+import 'package:expenses/utils/Dictionary.dart';
 
 
 class ExpenseFormWidget extends StatefulWidget{
@@ -34,7 +34,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
   String _validateValue(String pValue){
     pValue = pValue.trim();
     if(pValue.length == 0)
-      return "Veuillez saisir le montant de la dépense";
+      return Dictionary.term("new_expense.expense.empty_error");
     _value = double.parse(pValue);
     return null;
   }
@@ -52,7 +52,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
     return new Scaffold(
         key:_scaffoldKey,
         appBar: new AppBar(
-            title:const Text("Ajouter une dépense"),
+            title:new Text(Dictionary.term("new_expense.title")),
             actions: <Widget>[
               new IconButton(icon: new Icon(Icons.check), onPressed:_postExpense)
             ]
@@ -65,14 +65,14 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                   new TextFormField(
                       decoration:new InputDecoration(
                         icon:const Icon(Icons.euro_symbol),
-                        hintText: "Combien avez-vous dépensé?",
-                        labelText: "Dépense",
+                        hintText: Dictionary.term("new_expense.expense.hint"),
+                        labelText: Dictionary.term("new_expense.expense.label"),
                       ),
                       keyboardType: TextInputType.number,
                       validator: _validateValue
                   ),
                   new _CategoryPicker(
-                    labelText: "Catégorie",
+                    labelText: Dictionary.term("new_expense.category.label"),
                     categories:settings.categories,
                     value:_categories,
                     categoryChanged: (String pValue){
@@ -80,7 +80,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                     },
                   ),
                   new _DatePicker(
-                      labelText: "Date",
+                      labelText: Dictionary.term("new_expense.date.label"),
                       dateValue: _selectedDate,
                       dateChanged: (DateTime pValue){
                         setState((){
@@ -91,7 +91,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                   new ListTile(
                     leading:new Icon(Icons.update),
                     dense: true,
-                    title: new Text("Dépense récurrente"),
+                    title: new Text(Dictionary.term("new_expense.recurrent_expense.label")),
                     trailing: new Checkbox(value: _isRecurrent, onChanged: (bool pValue){
                       setState((){
                         _isRecurrent = pValue;
@@ -145,7 +145,7 @@ class _CategoryPicker extends StatelessWidget{
     showDialog(
         context: pContext,
         child: new SimpleDialog(
-          title: new Text("Sélectionner une catégorie"),
+          title: new Text(Dictionary.term("new_expense.category.dialog_title")),
           children: items,
         )
     ).then<Null>((String pValue){

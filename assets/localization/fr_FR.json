@@ -1,0 +1,64 @@
+{
+	"drawer":{
+		"home":"Accueil",
+		"metrics":"Statistiques",
+		"expenses":"Dépenses",
+		"settings":"Paramètres"
+	},
+	"settings":{
+		"title":"Paramètres",
+		"salary_definition":"Définir le salaire",
+		"salary_display":"Afficher le salaire sur l'accueil",
+		"salary_day":"Jour de réception du salaire",
+		"categories":"Gérer les catégories"
+	},
+	"home":{
+		"expenses":"Dépenses",
+		"days":"Jours",
+		"savings":"Economies estimées",
+		"salary":"Salaire"
+	},
+	"categories":{
+		"title":"Gestion des catégories",
+		"add_dialog":{
+			"title":""
+		},
+		"dialog":{
+			"name":{
+				"label":"",
+				"hint":"",
+				"error":""
+			},
+			"actions":{
+				"save":"Enregistrer",
+				"cancel":"Annuler"
+			}
+		},
+		"submenu":{
+			"subcategory":"Sous catégorie",
+			"edit":"Modifier",
+			"delete":"Supprimer"
+		}
+	},
+	"metrics":{
+		"title":"Statistiques"
+	},
+	"new_expense":{
+		"title":"Ajouter une dépense",
+		"expense":{
+			"label":"Dépense",
+			"hint":"Combien avez-vous dépensez ?",
+			"empty_error":"Veuillez saisir le montant de la dépense"
+		},
+		"category":{
+			"label":"Catégorie",
+			"dialog_title":"Sélectionner une catégorie"
+		},
+		"date":{
+			"label":"Date"
+		},
+		"recurrent_expense":{
+			"label":"Dépense récurrente"
+		}
+	}
+}

@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:expenses/data/settings.dart';
+import 'package:expenses/utils/Dictionary.dart';
 
 typedef void ActionItemCallback(String value, Category category);
 
@@ -44,7 +45,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Gestion des catégories'),
+        title: new Text(Dictionary.term('categories.title')),
       ),
       body: new ListView(
         children: tree,
@@ -187,25 +188,25 @@ class _MapExpansionItem{
               actionHandler(pValue, category);
             },
             itemBuilder: (BuildContext pContext) => <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
+            new PopupMenuItem<String>(
               value: 'new',
-              child: const ListTile(
+              child: new ListTile(
                 leading: const Icon(Icons.add),
-                title: const Text('Sous catégorie')
+                title: new Text('Sous catégorie')
               )
             ),
-            const PopupMenuItem<String>(
+            new PopupMenuItem<String>(
               value: 'edit',
-              child: const ListTile(
+              child: new ListTile(
                 leading: const Icon(Icons.edit),
-                title: const Text('Modifier')
+                title: new Text('Modifier')
               )
             ),
-            const PopupMenuItem<String>(
+            new PopupMenuItem<String>(
               value: 'remove',
-              child: const ListTile(
+              child: new ListTile(
                 leading: const Icon(Icons.delete),
-                title: const Text('Supprimer')
+                title: new Text('Supprimer')
               )
             )
           ])

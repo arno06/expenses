@@ -8,6 +8,7 @@ import 'dart:ui' show lerpDouble;
 import 'package:expenses/data/settings.dart';
 import 'package:expenses/data/expense.dart';
 import 'package:expenses/utils/geom.dart';
+import 'package:expenses/utils/Dictionary.dart';
 
 class HomeWidget extends StatefulWidget{
   const HomeWidget({Key key, this.settings}):super(key:key);
@@ -79,11 +80,11 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
   Widget build(BuildContext pContext){
     int savingColor = this.savings == null ?0x00000000:0xFF006978;
     List<Widget> indicatorsRow = <Widget>[
-      new IndicatorWidget(count:this.expensesCount, label:"Dépenses", icon:Icons.list),
-      new IndicatorWidget(count:this.daysLeft, label:"Jours", icon:Icons.schedule),
+      new IndicatorWidget(count:this.expensesCount, label:Dictionary.term("home.expenses"), icon:Icons.list),
+      new IndicatorWidget(count:this.daysLeft, label:Dictionary.term("home.days"), icon:Icons.schedule),
     ];
     if(settings != null && settings.displaySalary)
-      indicatorsRow.add(new IndicatorWidget(count:this.displaySalary, label:"Salaire", icon:Icons.euro_symbol));
+      indicatorsRow.add(new IndicatorWidget(count:this.displaySalary, label:Dictionary.term("home.salary"), icon:Icons.euro_symbol));
     return new Scaffold(
       key: _scaffoldKey,
       drawer: new HomeDrawer(),
@@ -149,7 +150,7 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
                         padding:const EdgeInsets.only(right:10.0),
                         child: new Icon(Icons.euro_symbol, color:Colors.grey, size:14.0),
                       ),
-                      new Text("Economies estimées", style: new TextStyle(color:Colors.grey, fontSize: 14.0)),
+                      new Text(Dictionary.term("home.savings"), style: new TextStyle(color:Colors.grey, fontSize: 14.0)),
                     ],
                   ),
                   new Text(this.savings.toString(), style: new TextStyle(color:new Color(savingColor), fontSize: 80.0, fontWeight: FontWeight.bold))
@@ -276,22 +277,22 @@ class _HomeDrawerState extends State<HomeDrawer>{
 
     List<Map> items = <Map>[
       {
-        "label": "Accueil",
+        "label": Dictionary.term("drawer.home"),
         "icon": Icons.home,
         "route": "/home"
       },
       {
-        "label": "Statistiques",
+        "label": Dictionary.term("drawer.metrics"),
         "icon": Icons.show_chart,
         "route": "/charts"
       },
       {
-        "label": "Dépenses",
+        "label": Dictionary.term("drawer.expenses"),
         "icon": Icons.view_list,
         "route": "/expenses"
       },
       {
-        "label": "Paramètres",
+        "label": Dictionary.term("drawer.settings"),
         "icon": Icons.settings,
         "route": "/settings"
       }

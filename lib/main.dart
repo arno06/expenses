@@ -1,6 +1,9 @@
 
+import 'dart:async';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 
+import 'package:expenses/utils/Dictionary.dart';
 import 'package:expenses/data/settings.dart';
 import 'package:expenses/widgets/ExpenseFormWidget.dart';
 import 'package:expenses/widgets/HomeWidget.dart';
@@ -9,16 +12,15 @@ import 'package:expenses/widgets/SettingsWidget.dart';
 import 'package:expenses/widgets/ChartsWidget.dart';
 import 'package:expenses/widgets/MapEditorWidget.dart';
 
-import 'package:intl/date_symbol_data_local.dart';
-
-void main() {
+Future<Null> main() async {
+  initializeDateFormatting('fr_FR');
+  await Dictionary.setLocal('fr_FR');
   runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
 
   MyApp(){
-    initializeDateFormatting('fr_FR');
     settings = new Settings();
   }
 
