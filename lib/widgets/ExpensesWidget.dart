@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import 'package:expenses/data/settings.dart';
 import 'package:expenses/data/expense.dart';
+import 'package:expenses/utils/Dictionary.dart';
 
 class ExpensesWidget extends StatefulWidget{
 
@@ -31,7 +32,8 @@ class _ExpensesWidgetState extends State<ExpensesWidget>{
     DateFormat format = new DateFormat.yMMMd("fr_FR");
     String dateDetail = format.format(pExpense.date);
     if(pExpense.isRecurrent){
-      dateDetail = "le "+pExpense.date.day.toString()+" du mois";
+      dateDetail = Dictionary.term("expenses.recurrent_expense_date");
+      dateDetail = dateDetail.replaceAll("%day", pExpense.date.day.toString());
     }
     return new Dismissible(
       direction: DismissDirection.endToStart,
@@ -77,7 +79,7 @@ class _ExpensesWidgetState extends State<ExpensesWidget>{
               margin: const EdgeInsets.only(right: 10.0),
               child: new Icon(Icons.sentiment_very_satisfied, color: Colors.grey,),
             ),
-            new Text("Aucune dépense enregistrée", style: new TextStyle(color: Colors.grey),)
+            new Text(Dictionary.term("expenses.empty_list"), style: new TextStyle(color: Colors.grey),)
           ],
         ),
       );
@@ -86,7 +88,7 @@ class _ExpensesWidgetState extends State<ExpensesWidget>{
 
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Liste des dépenses"),
+        title: Dictionary.localizedText("expenses.title"),
       ),
       body: body,
     );

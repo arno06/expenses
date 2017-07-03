@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:expenses/data/settings.dart';
+import 'package:expenses/utils/Dictionary.dart';
 
 class SettingsWidget extends StatefulWidget{
 
@@ -55,24 +56,24 @@ class _SettingsWidgetState extends State<SettingsWidget>{
     String salary = settings == null || settings.salary == null ? "" : settings.salary.toString()+"€";
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Paramètres"),
+        title: Dictionary.localizedText("settings.title"),
       ),
       body: new ListView(
         children: <Widget>[
           new ListTile(
-            title: new Text("Définir le salaire"),
+            title: Dictionary.localizedText("settings.salary_definition"),
             subtitle: new Text(salary),
             onTap: (){
               showSettingsDialog(
                 context: context,
                 child: new AlertDialog(
-                  title: new Text("Définir le salaire"),
+                  title: Dictionary.localizedText("settings.salary_definition"),
                   content: new Form(
                     key: _formKey,
                     child: new TextFormField(
                       decoration:new InputDecoration(
                         icon:const Icon(Icons.euro_symbol),
-                        labelText: "Salaire",
+                        labelText: Dictionary.term("settings.salary"),
                       ),
                       controller: new TextEditingController(text:this.settings.salary.toString()),
                       keyboardType: TextInputType.number,
@@ -82,11 +83,11 @@ class _SettingsWidgetState extends State<SettingsWidget>{
                   actions: <Widget>[
                     new FlatButton(
                       onPressed: (){Navigator.pop(context, null);},
-                      child: const Text("Annuler")
+                      child: Dictionary.localizedText("settings.actions.cancel")
                     ),
                     new FlatButton(
                       onPressed: (){Navigator.pop(context, "save");},
-                      child: const Text("Enregistrer")
+                      child: Dictionary.localizedText("settings.actions.save")
                     ),
                   ],
                 )
@@ -95,7 +96,7 @@ class _SettingsWidgetState extends State<SettingsWidget>{
           ),
           new Divider(),
           new ListTile(
-            title: new Text("Afficher le salaire sur l'accueil"),
+            title: Dictionary.localizedText("settings.salary_display"),
             trailing: new Checkbox(
               value: settings.displaySalary,
               onChanged: (pValue){
@@ -111,19 +112,19 @@ class _SettingsWidgetState extends State<SettingsWidget>{
           ),
           new Divider(),
           new ListTile(
-            title: new Text("Jour de réception du salaire"),
+            title: Dictionary.localizedText("settings.salary_day"),
             subtitle: new Text(settings.salaryDay.toString()),
             onTap: (){
               showSettingsDialog(
                   context: context,
                   child: new AlertDialog(
-                    title: new Text("Jour de réception du salaire"),
+                    title: Dictionary.localizedText("settings.salary_day"),
                     content: new Form(
                         key: _formKey,
                         child: new TextFormField(
                           decoration:new InputDecoration(
                             icon:const Icon(Icons.date_range),
-                            labelText: "Jours du Mois",
+                            labelText: Dictionary.term("settings.day_label"),
                           ),
                           controller: new TextEditingController(text:this.settings.salaryDay.toString()),
                           keyboardType: TextInputType.number,
@@ -133,11 +134,11 @@ class _SettingsWidgetState extends State<SettingsWidget>{
                     actions: <Widget>[
                       new FlatButton(
                           onPressed: (){Navigator.pop(context, null);},
-                          child: const Text("Annuler")
+                          child: Dictionary.localizedText("settings.actions.cancel")
                       ),
                       new FlatButton(
                           onPressed: (){Navigator.pop(context, "save");},
-                          child: const Text("Enregistrer")
+                          child: Dictionary.localizedText("settings.actions.save")
                       ),
                     ],
                   )
@@ -146,7 +147,7 @@ class _SettingsWidgetState extends State<SettingsWidget>{
           ),
           new Divider(),
           new ListTile(
-            title: new Text("Gérer les catégories"),
+            title: Dictionary.localizedText("settings.categories"),
             trailing: new Icon(Icons.navigate_next),
             onTap: (){
               Navigator.pushNamed(context, '/categories/edit');

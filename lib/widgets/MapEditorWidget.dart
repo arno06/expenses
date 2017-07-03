@@ -16,6 +16,11 @@ class MapEditorWidget extends StatefulWidget{
 }
 
 class _MapEditorWidgetState extends State<MapEditorWidget>{
+
+  static const String ACTION_ADD = "add";
+  static const String ACTION_EDIT = "edit";
+  static const String ACTION_REMOVE = "remove";
+
   _MapEditorWidgetState(this.settings){
     categories = this.settings.categories;
     setItems();
@@ -45,7 +50,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(Dictionary.term('categories.title')),
+        title: Dictionary.localizedText('categories.title'),
       ),
       body: new ListView(
         children: tree,
@@ -55,7 +60,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
   String validateCategoryLabel(String pValue){
     if(pValue.isEmpty){
-      return "Merci de préciser un nom de catégorie";
+      return Dictionary.term("categories.dialog.name.error");
     }
     cat.label = pValue;
     return null;
@@ -65,9 +70,9 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
     GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 
-    if(pValue == "new" || pValue == "edit"){
-      cat = pValue=="new"?new Category('Catégorie', Color.lerp(pCat.color, Colors.white, 0.45)):new Category(pCat.label, pCat.color);
-      String dialogTitle = pValue=="new"?"Nouvelle catégorie":"Modification d'une catégorie";
+    if(pValue == ACTION_ADD || pValue == ACTION_EDIT){
+      cat = pValue==ACTION_ADD?new Category(Dictionary.term("categories.dialog.name.default_value"), Color.lerp(pCat.color, Colors.white, 0.45)):new Category(pCat.label, pCat.color);
+      String dialogTitle = pValue==ACTION_ADD?Dictionary.term("categories.add_dialog.title"):Dictionary.term("categories.edit_dialog.title");
       String action = await showDialog(
         context: context,
         child: new AlertDialog(
@@ -79,7 +84,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
               validator: validateCategoryLabel,
               decoration:new InputDecoration(
                 icon:const Icon(Icons.category),
-                labelText: "Libellé",
+                labelText: Dictionary.term("categories.dialog.name.label"),
               ),
               controller: new TextEditingController(text:cat.label),
             )
@@ -87,11 +92,11 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
           actions: <Widget>[
             new FlatButton(
                 onPressed: (){Navigator.pop(context, null);},
-                child: const Text("Annuler")
+                child: Dictionary.localizedText("categories.dialog.actions.cancel")
             ),
             new FlatButton(
                 onPressed: (){Navigator.pop(context, "save");},
-                child: const Text("Enregistrer")
+                child: Dictionary.localizedText("categories.dialog.actions.save")
             ),
           ],
         ),
@@ -116,13 +121,13 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
         if(cat.compareTo(pCat) == 1) {
           found = true;
           switch(pValue){
-            case "new":
+            case ACTION_ADD:
               cat.children.add(this.cat);
               break;
-            case "remove":
+            case ACTION_REMOVE:
               skip = true;
               break;
-            case "edit":
+            case ACTION_EDIT:
               cat.label = this.cat.label;
               cat.color = this.cat.color;
               break;
@@ -189,24 +194,24 @@ class _MapExpansionItem{
             },
             itemBuilder: (BuildContext pContext) => <PopupMenuEntry<String>>[
             new PopupMenuItem<String>(
-              value: 'new',
+              value: _MapEditorWidgetState.ACTION_ADD,
               child: new ListTile(
                 leading: const Icon(Icons.add),
-                title: new Text('Sous catégorie')
+                title: Dictionary.localizedText("categories.submenu.add")
               )
             ),
             new PopupMenuItem<String>(
-              value: 'edit',
+              value: _MapEditorWidgetState.ACTION_EDIT,
               child: new ListTile(
                 leading: const Icon(Icons.edit),
-                title: new Text('Modifier')
+                title: Dictionary.localizedText("categories.submenu.edit")
               )
             ),
             new PopupMenuItem<String>(
-              value: 'remove',
+              value: _MapEditorWidgetState.ACTION_REMOVE,
               child: new ListTile(
-                leading: const Icon(Icons.delete),
-                title: new Text('Supprimer')
+                leading: const Icon(Icons.remove),
+                title: Dictionary.localizedText("categories.submenu.remove")
               )
             )
           ])

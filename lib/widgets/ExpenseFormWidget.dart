@@ -52,7 +52,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
     return new Scaffold(
         key:_scaffoldKey,
         appBar: new AppBar(
-            title:new Text(Dictionary.term("new_expense.title")),
+            title:Dictionary.localizedText("new_expense.title"),
             actions: <Widget>[
               new IconButton(icon: new Icon(Icons.check), onPressed:_postExpense)
             ]
@@ -91,7 +91,7 @@ class ExpenseFormState extends State<ExpenseFormWidget>{
                   new ListTile(
                     leading:new Icon(Icons.update),
                     dense: true,
-                    title: new Text(Dictionary.term("new_expense.recurrent_expense.label")),
+                    title: Dictionary.localizedText("new_expense.recurrent_expense.label"),
                     trailing: new Checkbox(value: _isRecurrent, onChanged: (bool pValue){
                       setState((){
                         _isRecurrent = pValue;
@@ -145,7 +145,7 @@ class _CategoryPicker extends StatelessWidget{
     showDialog(
         context: pContext,
         child: new SimpleDialog(
-          title: new Text(Dictionary.term("new_expense.category.dialog_title")),
+          title: Dictionary.localizedText("new_expense.category.dialog_title"),
           children: items,
         )
     ).then<Null>((String pValue){

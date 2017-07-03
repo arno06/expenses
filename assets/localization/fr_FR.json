@@ -7,10 +7,16 @@
 	},
 	"settings":{
 		"title":"Paramètres",
+		"salary_label":"Salaire",
 		"salary_definition":"Définir le salaire",
 		"salary_display":"Afficher le salaire sur l'accueil",
 		"salary_day":"Jour de réception du salaire",
-		"categories":"Gérer les catégories"
+		"day_label":"Jours du Mois",
+		"categories":"Gérer les catégories",
+		"actions":{
+			"cancel":"Annuler",
+			"save":"Enregistrer"
+		}
 	},
 	"home":{
 		"expenses":"Dépenses",
@@ -21,13 +27,16 @@
 	"categories":{
 		"title":"Gestion des catégories",
 		"add_dialog":{
-			"title":""
+			"title":"Nouvelle catégorie"
+		},
+		"edit_dialog":{
+			"title":"Modification d'une catégorie"
 		},
 		"dialog":{
 			"name":{
-				"label":"",
-				"hint":"",
-				"error":""
+				"default_value":"Catégorie",
+				"label":"Libellé",
+				"error":"Merci de préciser un nom de catégorie"
 			},
 			"actions":{
 				"save":"Enregistrer",
@@ -35,9 +44,9 @@
 			}
 		},
 		"submenu":{
-			"subcategory":"Sous catégorie",
+			"add":"Sous catégorie",
 			"edit":"Modifier",
-			"delete":"Supprimer"
+			"remove":"Supprimer"
 		}
 	},
 	"metrics":{
@@ -60,5 +69,10 @@
 		"recurrent_expense":{
 			"label":"Dépense récurrente"
 		}
+	},
+	"expenses":{
+		"title":"Liste des dépenses",
+		"recurrent_expense_date":"le %day du mois",
+		"empty_list":"Aucune dépense enregistrée"
 	}
 }

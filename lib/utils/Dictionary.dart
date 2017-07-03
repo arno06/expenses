@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class Dictionary{
@@ -7,6 +8,10 @@ class Dictionary{
   static const String DEFAULT_VALUE = "Undefined";
 
   static Dictionary _instance;
+
+  static localizedText(String pId){
+    return new Text(term(pId));
+  }
 
   static term(String pId){
     if(pId.isEmpty)
