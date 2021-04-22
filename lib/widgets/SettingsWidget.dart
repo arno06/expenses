@@ -6,10 +6,10 @@ class SettingsWidget extends StatefulWidget{
 
   SettingsWidget({this.settings});
 
-  final Settings settings;
+  final Settings? settings;
 
   @override
-  _SettingsWidgetState createState() => new _SettingsWidgetState(this.settings);
+  _SettingsWidgetState createState() => new _SettingsWidgetState(this.settings!);
 }
 
 class _SettingsWidgetState extends State<SettingsWidget>{
@@ -19,16 +19,16 @@ class _SettingsWidgetState extends State<SettingsWidget>{
 
   final Settings settings;
 
-  String _validateSalary(String pValue){
-    int value = int.parse(pValue);
+  String? _validateSalary(String? pValue){
+    int value = int.parse(pValue!);
     if(value < 0)
       value = 0;
     settings.salary = value;
     return null;
   }
 
-  String _validateSalaryMonth(String pValue){
-    int value = int.parse(pValue);
+  String? _validateSalaryMonth(String? pValue){
+    int value = int.parse(pValue!);
 
     if(value < 0)
       value = 1;
@@ -40,11 +40,11 @@ class _SettingsWidgetState extends State<SettingsWidget>{
     return null;
   }
 
-  void showSettingsDialog<T>({BuildContext context, Widget child}){
-    showDialog(context: context, child: child)
-      .then<Null>((T value){
+  void showSettingsDialog<T>({BuildContext? context, Widget? child}){
+    showDialog<String>(context: context!, builder:(BuildContext pContext){ return child!;})
+      .then<Null>((String? value){
         if(value == "save"){
-          final FormState f = _formKey.currentState;
+          final FormState f = _formKey.currentState!;
           f.validate();
         }
       }
@@ -53,7 +53,7 @@ class _SettingsWidgetState extends State<SettingsWidget>{
 
   @override
   Widget build(BuildContext pContext){
-    String salary = settings == null || settings.salary == null ? "" : settings.salary.toString()+"€";
+    String salary = settings.salary.toString()+"€";
     return new Scaffold(
       appBar: new AppBar(
         title: Dictionary.localizedText("settings.title"),
@@ -81,11 +81,11 @@ class _SettingsWidgetState extends State<SettingsWidget>{
                     )
                   ),
                   actions: <Widget>[
-                    new FlatButton(
+                    new TextButton(
                       onPressed: (){Navigator.pop(context, null);},
                       child: Dictionary.localizedText("settings.actions.cancel")
                     ),
-                    new FlatButton(
+                    new TextButton(
                       onPressed: (){Navigator.pop(context, "save");},
                       child: Dictionary.localizedText("settings.actions.save")
                     ),
@@ -101,7 +101,7 @@ class _SettingsWidgetState extends State<SettingsWidget>{
               value: settings.displaySalary,
               onChanged: (pValue){
                 setState((){
-                  settings.displaySalary = pValue;
+                  settings.displaySalary = pValue!;
                 });
               }),
             onTap: (){
@@ -132,11 +132,11 @@ class _SettingsWidgetState extends State<SettingsWidget>{
                         )
                     ),
                     actions: <Widget>[
-                      new FlatButton(
+                      new TextButton(
                           onPressed: (){Navigator.pop(context, null);},
                           child: Dictionary.localizedText("settings.actions.cancel")
                       ),
-                      new FlatButton(
+                      new TextButton(
                           onPressed: (){Navigator.pop(context, "save");},
                           child: Dictionary.localizedText("settings.actions.save")
                       ),

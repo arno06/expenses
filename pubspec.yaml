@@ -5,8 +5,9 @@ dependencies:
   http: '>=0.11.3+12'
   flutter:
     sdk: flutter
-  observe: any
-  path_provider: '^0.2.1+1'
+  observable: any
+  path_provider: any
+  intl_translation: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

@@ -11,9 +11,9 @@ import 'package:expenses/utils/geom.dart';
 import 'package:expenses/utils/Dictionary.dart';
 
 class HomeWidget extends StatefulWidget{
-  const HomeWidget({Key key, this.settings}):super(key:key);
+  const HomeWidget({Key? key, this.settings}):super(key:key);
 
-  final Settings settings;
+  final Settings? settings;
 
   @override
   HomeState createState() => new HomeState(this.settings);
@@ -21,22 +21,22 @@ class HomeWidget extends StatefulWidget{
 
 class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
   HomeState(this.settings){
-    this.settings.changes.listen((List<ChangeRecord> pChanges){
+    this.settings?.addListener((){
       refreshValues();
     });
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  final Settings settings;
+  final Settings? settings;
   
   int expensesCount = 0;
   int daysLeft = 0;
   int displaySalary = 0;
-  int savings;
+  int? savings = 0;
 
-  double value = 0.0;
-  AnimationController animation;
+  double? value = 0.0;
+  AnimationController? animation;
 
   @override
   void initState(){
@@ -46,33 +46,33 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
 
   Future<Null> refreshValues() async{
     DateTime today = new DateTime.now();
-    ExpensesData data = await settings.expensesData;
+    ExpensesData? data = await settings?.expensesData;
 
-    DateTime cd = new DateTime(today.year, today.month, settings.salaryDay);
+    DateTime cd = new DateTime(today.year, today.month, settings!.salaryDay);
 
     if(cd.isBefore(today)){
-      cd = new DateTime(today.year, today.month+1, settings.salaryDay);
+      cd = new DateTime(today.year, today.month+1, settings!.salaryDay);
     }
 
-    List<Expense> list = settings.getExpenses((new DateTime.now().month));
+    List<Expense> list = settings!.getExpenses((new DateTime.now().month));
     this.daysLeft = cd.difference(today).inDays;
     animation = new AnimationController(vsync: this, duration:const Duration(milliseconds:5000));
     double total = list.fold(0.0, (double value, Expense element)=>value+element.value);
-    int currentPercentage = ((total / data.salary) * 100).round();
+    int currentPercentage = ((total / data!.salary) * 100).round();
     this.savings = (data.salary - total).round();
     this.expensesCount = list.length;
     this.displaySalary = data.salaryDay;
-    animation.addListener((){
+    animation!.addListener((){
       setState((){
-        this.value = lerpDouble(this.value, currentPercentage, animation.value);
+        this.value = lerpDouble(this.value!, currentPercentage, animation!.value);
       });
     });
-    animation.forward();
+    animation?.forward();
   }
 
   @override
   void dispose(){
-    animation.dispose();
+    animation?.dispose();
     super.dispose();
   }
 
@@ -83,7 +83,7 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
       new IndicatorWidget(count:this.expensesCount, label:Dictionary.term("home.expenses"), icon:Icons.list),
       new IndicatorWidget(count:this.daysLeft, label:Dictionary.term("home.days"), icon:Icons.schedule),
     ];
-    if(settings != null && settings.displaySalary)
+    if(settings != null && settings!.displaySalary)
       indicatorsRow.add(new IndicatorWidget(count:this.displaySalary, label:Dictionary.term("home.salary"), icon:Icons.euro_symbol));
     return new Scaffold(
       key: _scaffoldKey,
@@ -99,7 +99,7 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
                 new Container(
                   padding:const EdgeInsets.only(left:10.0),
                   child: new IconButton(icon: new Icon(Icons.menu, color: Colors.white), onPressed: (){
-                    _scaffoldKey.currentState.openDrawer();
+                    _scaffoldKey.currentState?.openDrawer();
                   }),
                 ),
                 new Container(
@@ -112,13 +112,13 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
                 new Container(
                   padding: const EdgeInsets.only(top:50.0),
                   child:new Center(
-                    child: new ArcChart(value:this.value)
+                    child: new ArcChart(value:this.value!)
                   )
                 ),
                 new Container(
                   padding: const EdgeInsets.only(top:120.0),
                   child: new Center(
-                    child: new Text(this.value.round().toString()+"%",
+                    child: new Text(this.value!.round().toString()+"%",
                         style: new TextStyle(
                             fontSize: 45.0,
                             color: Colors.white,
@@ -168,11 +168,11 @@ class HomeState extends State<HomeWidget> with TickerProviderStateMixin{
 }
 
 class IndicatorWidget extends StatelessWidget{
-  const IndicatorWidget({Key key, this.count, this.label, this.icon}):super(key:key);
+  const IndicatorWidget({Key? key, this.count, this.label, this.icon}):super(key:key);
 
-  final IconData icon;
-  final int count;
-  final String label;
+  final IconData? icon;
+  final int? count;
+  final String? label;
 
   @override
   Widget build(BuildContext pContext){
@@ -184,7 +184,7 @@ class IndicatorWidget extends StatelessWidget{
                 margin:const EdgeInsets.only(right:5.0),
                 child: new Icon(this.icon,size: 12.0, color:Colors.grey),
               ),
-              new Text(this.label, style:new TextStyle(fontSize: 10.0, color: Colors.grey))
+              new Text(this.label!, style:new TextStyle(fontSize: 10.0, color: Colors.grey))
             ],
           ),
           new Text(this.count.toString(), style:new TextStyle(fontSize: 30.0, color:const Color(0xff00838f)))
@@ -194,9 +194,9 @@ class IndicatorWidget extends StatelessWidget{
 }
 
 class ArcChart extends StatelessWidget{
-  ArcChart({Key key, this.value}):super(key:key);
+  ArcChart({Key? key, this.value}):super(key:key);
 
-  final double value;
+  final double? value;
 
   @override
   Widget build(BuildContext pContext){
@@ -204,7 +204,7 @@ class ArcChart extends StatelessWidget{
       width:200.0,
       height:200.0,
       child: new CustomPaint(
-        painter:new ArcPainter(value:this.value)
+        painter:new ArcPainter(value:this.value!)
       )
     );
   }
@@ -213,7 +213,7 @@ class ArcChart extends StatelessWidget{
 class ArcPainter extends CustomPainter{
   ArcPainter({this.value});
 
-  double value;
+  double? value;
 
   @override
   void paint(Canvas pCanvas, Size pSize){
@@ -224,7 +224,7 @@ class ArcPainter extends CustomPainter{
     final double diff = 360.0 - maxAngle;
     final double s = 90.0 + (diff / 2.0);
 
-    final double valueAngle = maxAngle * (this.value / 100.0);
+    final double valueAngle = maxAngle * (this.value! / 100.0);
 
     this._drawArc(pCanvas, s, maxAngle, Colors.white, radius);
     this._drawArc(pCanvas, s, valueAngle, const Color(0xff56c8d8), radius);

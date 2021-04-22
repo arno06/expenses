@@ -9,7 +9,7 @@ class MapEditorWidget extends StatefulWidget{
 
   MapEditorWidget({this.settings});
 
-  final Settings settings;
+  final Settings? settings;
 
   @override
   _MapEditorWidgetState createState() => new _MapEditorWidgetState(this.settings);
@@ -22,19 +22,19 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
   static const String ACTION_REMOVE = "remove";
 
   _MapEditorWidgetState(this.settings){
-    categories = this.settings.categories;
+    categories = this.settings!.categories;
     setItems();
   }
 
-  Settings settings;
-  List<Category> categories;
+  Settings? settings;
+  List<Category>? categories;
 
-  List<_MapExpansionItem> items;
+  List<_MapExpansionItem>? items;
 
-  Category cat;
+  Category? cat;
 
   void setItems(){
-    items = categories.map((Category value){
+    items = categories?.map((Category value){
       return new _MapExpansionItem(category:value, actionHandler: this.itemCallBack);
     }).toList();
   }
@@ -44,7 +44,7 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
     List<Widget> tree = [];
 
-    items.forEach((_MapExpansionItem items){
+    items?.forEach((_MapExpansionItem items){
       tree.addAll(items.build(pContext, 0));
     });
 
@@ -58,52 +58,54 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
     );
   }
 
-  String validateCategoryLabel(String pValue){
-    if(pValue.isEmpty){
+  String? validateCategoryLabel(String? pValue){
+    if(pValue!.isEmpty){
       return Dictionary.term("categories.dialog.name.error");
     }
-    cat.label = pValue;
+    cat?.label = pValue;
     return null;
   }
 
-  Future<Null> itemCallBack(String pValue, Category pCat) async{
+  Future<Null> itemCallBack(String? pValue, Category? pCat) async{
 
     GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 
     if(pValue == ACTION_ADD || pValue == ACTION_EDIT){
-      cat = pValue==ACTION_ADD?new Category(Dictionary.term("categories.dialog.name.default_value"), Color.lerp(pCat.color, Colors.white, 0.45)):new Category(pCat.label, pCat.color);
+      cat = pValue==ACTION_ADD?new Category(Dictionary.term("categories.dialog.name.default_value"), Color.lerp(pCat?.color, Colors.white, 0.45)):new Category(pCat!.label, pCat.color);
       String dialogTitle = pValue==ACTION_ADD?Dictionary.term("categories.add_dialog.title"):Dictionary.term("categories.edit_dialog.title");
       String action = await showDialog(
         context: context,
-        child: new AlertDialog(
-          title: new Text(dialogTitle),
-          content: new Form(
-            key: formKey,
-            child:
-            new TextFormField(
-              validator: validateCategoryLabel,
-              decoration:new InputDecoration(
-                icon:const Icon(Icons.category),
-                labelText: Dictionary.term("categories.dialog.name.label"),
+        builder:(BuildContext pContext){
+          return new AlertDialog(
+            title: new Text(dialogTitle),
+            content: new Form(
+                key: formKey,
+                child:
+                new TextFormField(
+                  validator: validateCategoryLabel,
+                  decoration:new InputDecoration(
+                    icon:const Icon(Icons.category),
+                    labelText: Dictionary.term("categories.dialog.name.label"),
+                  ),
+                  controller: new TextEditingController(text:cat?.label),
+                )
+            ),
+            actions: <Widget>[
+              new TextButton(
+                  onPressed: (){Navigator.pop(context, null);},
+                  child: Dictionary.localizedText("categories.dialog.actions.cancel")
               ),
-              controller: new TextEditingController(text:cat.label),
-            )
-          ),
-          actions: <Widget>[
-            new FlatButton(
-                onPressed: (){Navigator.pop(context, null);},
-                child: Dictionary.localizedText("categories.dialog.actions.cancel")
-            ),
-            new FlatButton(
-                onPressed: (){Navigator.pop(context, "save");},
-                child: Dictionary.localizedText("categories.dialog.actions.save")
-            ),
-          ],
-        ),
+              new TextButton(
+                  onPressed: (){Navigator.pop(context, "save");},
+                  child: Dictionary.localizedText("categories.dialog.actions.save")
+              ),
+            ],
+          );
+        }
       );
 
       if(action == "save"){
-        if(!formKey.currentState.validate()){
+        if(!formKey.currentState!.validate()){
           return;
         }
       }
@@ -118,18 +120,18 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 
         var found = false;
 
-        if(cat.compareTo(pCat) == 1) {
+        if(cat.compareTo(pCat!) == 1) {
           found = true;
           switch(pValue){
             case ACTION_ADD:
-              cat.children.add(this.cat);
+              cat.children.add(this.cat!);
               break;
             case ACTION_REMOVE:
               skip = true;
               break;
             case ACTION_EDIT:
-              cat.label = this.cat.label;
-              cat.color = this.cat.color;
+              cat.label = this.cat!.label;
+              cat.color = this.cat?.color;
               break;
           }
         }
@@ -145,9 +147,9 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
       return cats;
     }
 
-    categories = walkTrough(categories);
+    categories = walkTrough(categories!);
 
-    settings.categories = categories;
+    settings?.categories = categories!;
 
     setState((){
       setItems();
@@ -158,16 +160,15 @@ class _MapEditorWidgetState extends State<MapEditorWidget>{
 class _MapExpansionItem{
 
   _MapExpansionItem({this.category, this.actionHandler}){
-    items = [];
-    this.category.children.forEach((Category value){
+    this.category!.children.forEach((Category value){
       items.add(new _MapExpansionItem(category:value, actionHandler: this.actionHandler));
     });
   }
 
-  ActionItemCallback actionHandler;
-  Category category;
+  ActionItemCallback? actionHandler;
+  Category? category;
   bool isExpanded = false;
-  List<_MapExpansionItem> items;
+  List<_MapExpansionItem> items = [];
 
   List<Widget> build(BuildContext pContext, int pDeep){
 
@@ -185,12 +186,12 @@ class _MapExpansionItem{
         children: <Widget>[
           new Container(
             margin: const EdgeInsets.only(right:10.0),
-            child: new CircleAvatar(backgroundColor: category.color, radius: 10.0,),
+            child: new CircleAvatar(backgroundColor: category?.color, radius: 10.0,),
           ),
-          new Expanded(child: new Text(category.label)),
+          new Expanded(child: new Text(category!.label)),
           new PopupMenuButton(
             onSelected: (String pValue){
-              actionHandler(pValue, category);
+              actionHandler!(pValue, category!);
             },
             itemBuilder: (BuildContext pContext) => <PopupMenuEntry<String>>[
             new PopupMenuItem<String>(

@@ -11,10 +11,10 @@ class ChartsWidget extends StatefulWidget{
 
   ChartsWidget({this.settings});
 
-  final Settings settings;
+  final Settings? settings;
 
   @override
-  _ChartsWidgetState createState() => new _ChartsWidgetState(this.settings);
+  _ChartsWidgetState createState() => new _ChartsWidgetState(this.settings!);
 }
 
 class _ChartsWidgetState extends State<ChartsWidget>{
@@ -67,10 +67,10 @@ class _ChartsWidgetState extends State<ChartsWidget>{
         recurrentMap['nonrecurrent'].value += exp.value;
       }
     }
-    categorizedMap.forEach((String pKey, PiePart pPart){
+    categorizedMap.forEach((dynamic pKey, dynamic pPart){
       categorizedData.add(pPart);
     });
-    recurrentMap.forEach((String pKey, PiePart pPart){
+    recurrentMap.forEach((dynamic pKey, dynamic pPart){
       recurrentData.add(pPart);
     });
 
@@ -105,14 +105,14 @@ class _ChartsWidgetState extends State<ChartsWidget>{
 class PieChart extends StatelessWidget{
   PieChart({this.data});
 
-  final List<PiePart> data;
+  final List<PiePart>? data;
 
   @override
   Widget build(BuildContext pContext){
 
     List<Widget> legend = [];
 
-    this.data.forEach((PiePart pPart){
+    this.data?.forEach((PiePart pPart){
       legend.add(new Container(
         margin:const EdgeInsets.only(bottom:4.0),
         child: new Row(
@@ -124,7 +124,7 @@ class PieChart extends StatelessWidget{
                 backgroundColor: pPart.color,
               ),
             ),
-            new Text(pPart.label, style:new TextStyle(color: const Color(0xff284a63), fontSize: 12.0))
+            new Text(pPart.label!, style:new TextStyle(color: const Color(0xff284a63), fontSize: 12.0))
           ],
         ),
       ));
@@ -138,7 +138,7 @@ class PieChart extends StatelessWidget{
             width:250.0,
             height:250.0,
             child: new CustomPaint(
-                painter:new PiePainter(data:data)
+                painter:new PiePainter(data:data!)
             )
         ),
         new Column(
@@ -153,32 +153,32 @@ class PieChart extends StatelessWidget{
 class PiePart{
   PiePart({this.label, this.value, this.color});
 
-  Color color;
-  double value;
-  String label;
+  Color? color;
+  double? value;
+  String? label;
 }
 
 class PiePainter extends CustomPainter{
   PiePainter({this.data});
 
-  List<PiePart> data;
+  List<PiePart>? data;
 
   @override
   void paint(Canvas pCanvas, Size pSize){
 
     double circle = 360.0;
     double total = 0.0;
-    data.forEach((PiePart pPart){
-      total += pPart.value;
+    data?.forEach((PiePart pPart){
+      total += pPart.value!;
     });
 
     double currentAngle = 0.0;
 
     Offset center = pSize.center(new Offset(0.0, 0.0));
-    data.forEach((PiePart pPart){
-      double angle = circle * (pPart.value / total);
+    data?.forEach((PiePart pPart){
+      double angle = circle * (pPart.value! / total);
       double rad = Geom.toRadian(currentAngle);
-      Paint p = new Paint()..color = pPart.color;
+      Paint p = new Paint()..color = pPart.color!;
       Path path = new Path();
       Offset start = center + new Offset(cos(rad) * center.dx, sin(rad) * center.dy);
       path.moveTo(center.dx, center.dy);
@@ -193,8 +193,8 @@ class PiePainter extends CustomPainter{
       currentAngle += angle;
     });
 
-    data.forEach((PiePart pPart){
-      double angle = circle * (pPart.value / total);
+    data?.forEach((PiePart pPart){
+      double angle = circle * (pPart.value! / total);
       double rad = Geom.toRadian(currentAngle);
       Paint p = new Paint()..color = const Color(0xfff3f8f9);
       Offset start = center + new Offset(cos(rad) * center.dx, sin(rad) * center.dy);

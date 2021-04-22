@@ -20,11 +20,12 @@ Future<Null> main() async {
 
 class MyApp extends StatelessWidget {
 
-  MyApp(){
-    settings = new Settings();
-  }
 
-  Settings settings;
+  Settings? settings;
+
+  MyApp(){
+    this.settings = new Settings();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +36,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.cyan,
       ),
       routes: <String, WidgetBuilder>{
-        '/':  (BuildContext context) => new HomeWidget(settings:this.settings),
-        '/add':  (BuildContext context) => new ExpenseFormWidget(settings:this.settings),
-        '/expenses': (BuildContext context) => new ExpensesWidget(settings:this.settings),
-        '/settings': (BuildContext context) => new SettingsWidget(settings:this.settings),
-        '/charts': (BuildContext context) => new ChartsWidget(settings:this.settings),
-        '/categories/edit': (BuildContext context) => new MapEditorWidget(settings:this.settings),
+        '/':  (BuildContext context) => new HomeWidget(settings:this.settings!),
+        '/add':  (BuildContext context) => new ExpenseFormWidget(settings:this.settings!),
+        '/expenses': (BuildContext context) => new ExpensesWidget(settings:this.settings!),
+        '/settings': (BuildContext context) => new SettingsWidget(settings:this.settings!),
+        '/charts': (BuildContext context) => new ChartsWidget(settings:this.settings!),
+        '/categories/edit': (BuildContext context) => new MapEditorWidget(settings:this.settings!),
       }
     );
   }

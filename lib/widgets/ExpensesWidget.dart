@@ -9,10 +9,10 @@ class ExpensesWidget extends StatefulWidget{
 
   ExpensesWidget({this.settings});
 
-  final Settings settings;
+  final Settings? settings;
 
   @override
-  _ExpensesWidgetState createState() => new _ExpensesWidgetState(this.settings);
+  _ExpensesWidgetState createState() => new _ExpensesWidgetState(this.settings!);
 }
 
 class _ExpensesWidgetState extends State<ExpensesWidget>{

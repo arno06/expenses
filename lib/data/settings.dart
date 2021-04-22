@@ -1,12 +1,11 @@
 import 'expense.dart';
-import 'package:observable/observable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
-class Settings extends Object with ChangeNotifier{
+class Settings extends ChangeNotifier{
   Settings(){
     _loadData();
   }
@@ -15,35 +14,35 @@ class Settings extends Object with ChangeNotifier{
 
   bool _opened = false;
 
-  ExpensesData _expensesData;
+  ExpensesData? _expensesData;
 
   Future<Expense> addExpense(double pValue, DateTime pDate, String pCategories, bool pIsRecurrent) async{
     Expense exp = new Expense(pValue, pDate, pCategories, pIsRecurrent);
-    this._expensesData.expenses.add(exp);
+    this._expensesData?.expenses.add(exp);
     await _saveExpensesData();
     return exp;
   }
 
   Future<Null> removeExpense(Expense pExpense) async{
-    _expensesData.expenses.remove(pExpense);
-    notifyChange(const ChangeRecord());
+    _expensesData?.expenses.remove(pExpense);
+    notifyListeners();
     _saveExpensesData();
   }
 
-  Future<ExpensesData> get expensesData async{
+  Future<ExpensesData?> get expensesData async{
 
     if(_opened) {
       return _expensesData;
     }
-   await _loadData();
+    await _loadData();
     return _expensesData;
   }
 
   Future<Null> _saveExpensesData() async{
     File localFile = await _getLocalFile();
-    Map map = _expensesData.toMap();
-    await localFile.writeAsString(JSON.encode(map));
-    notifyChange(const ChangeRecord());
+    Map? map = _expensesData?.toMap();
+    await localFile.writeAsString(json.encode(map));
+    notifyListeners();
   }
 
   Future<File> _getLocalFile() async{
@@ -58,8 +57,8 @@ class Settings extends Object with ChangeNotifier{
 
       String content = await file.readAsString();
 
-      Map data = JSON.decode(content);
-      _expensesData.fromMap(data);
+      Map data = json.decode(content);
+      _expensesData?.fromMap(data);
 
     } on FileSystemException{
       print('Settings.getExpensesData::unable to get File data');
@@ -69,44 +68,44 @@ class Settings extends Object with ChangeNotifier{
   }
 
   int get salary{
-    return _expensesData.salary;
+    return _expensesData!.salary;
   }
 
   set salary(int pValue){
-    _expensesData.salary = pValue;
+    _expensesData?.salary = pValue;
     _saveExpensesData();
   }
 
   bool get displaySalary{
     if(_expensesData == null)
       return false;
-    return _expensesData.displaySalary;
+    return _expensesData!.displaySalary;
   }
 
   set displaySalary(bool pValue){
-    _expensesData.displaySalary = pValue;
+    _expensesData?.displaySalary = pValue;
     _saveExpensesData();
   }
 
   int get salaryDay{
-    return _expensesData.salaryDay;
+    return _expensesData!.salaryDay;
   }
 
   set salaryDay(int pValue){
-    _expensesData.salaryDay = pValue;
+    _expensesData?.salaryDay = pValue;
     _saveExpensesData();
   }
 
   List<Expense> get expenses{
-    return _expensesData.expenses;
+    return _expensesData!.expenses;
   }
 
   List<Category> get categories{
-    return _expensesData.categories;
+    return _expensesData!.categories;
   }
 
   set categories(List<Category> pValue){
-    _expensesData.categories = pValue;
+    _expensesData?.categories = pValue;
     _saveExpensesData();
   }
 
@@ -165,7 +164,7 @@ class ExpensesData{
       Expense exp;
       bool isRecurrent;
       for(var i = 0, max = pMap['expenses'].length; i<max; i++){
-        map = JSON.decode(pMap['expenses'][i]);
+        map = json.decode(pMap['expenses'][i]);
         isRecurrent = false;
         if(map.containsKey("isRecurrent"))
           isRecurrent = map["isRecurrent"];
@@ -200,7 +199,7 @@ class ExpensesData{
       map['date'] = exp.date.toString();
       map['categories'] = exp.categories;
       map['isRecurrent'] = exp.isRecurrent;
-      expenses.add(JSON.encode(map));
+      expenses.add(json.encode(map));
     }
 
     data['expenses'] = expenses;
@@ -213,7 +212,7 @@ class Category extends Comparable<Category>{
   Category([this.label = "Category", this.color = const Color(0xffff0000)]);
 
   String label;
-  Color color;
+  Color? color;
   List<Category> children = <Category>[];
 
   @override
@@ -224,7 +223,7 @@ class Category extends Comparable<Category>{
   Map toMap(){
     Map m = new Map();
     m['label'] = label;
-    m['color'] = color.value;
+    m['color'] = color!.value;
     m['children'] = children.map((Category c){
       return c.toMap();
     }).toList();
